@@ -3,12 +3,21 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "react-native";
 import ImageSlider from "./components/ImageSlider";
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 export default App = () => {
   return (
-    <View style={StyleSheet.container}>
-      <ImageSlider />
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={StyleSheet.container}>
+        <Text>This is a sample text</Text>
+        <ImageSlider />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

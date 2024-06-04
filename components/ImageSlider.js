@@ -11,7 +11,6 @@ export default ImageSlider = () => {
         data={sliderdata}
         renderItem={({ item }) => <SliderItem item={item} />}
         horizontal
-        contentContainerStyle={{ height: 100 }}
       />
     </View>
   );
