@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "65a60fba-b077-4594-a5bf-34ad0f6c56b4"
+      }
+    },
+    "owner": "manichaow"
   }
 }
