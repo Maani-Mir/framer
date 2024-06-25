@@ -11,4 +11,7 @@ export default [
   {
     image: require("../assets/image-slider-4.jpg"),
   },
+  {
+    image: require("../assets/image-slider-5.jpg"),
+  },
 ];
