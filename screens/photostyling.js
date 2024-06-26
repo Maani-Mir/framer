@@ -17,9 +17,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 // import GalleryAccess from "./GalleryAccess";
 
-export default function PhotoStyling({ navigation }) {
+export default function PhotoStyling() {
   const route = useRoute();
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
   const [borderColor, setBorderColor] = useState("transparent");
   const { selectedImagesGlobal = [] } = route.params || {};
   const [modalVisible, setModalVisible] = useState(false);
@@ -77,12 +77,13 @@ export default function PhotoStyling({ navigation }) {
     setModalVisible(false);
   };
 
-  const handleAddressChange = (field, value) => {
-    setAddress((prev) => ({ ...prev, [field]: value }));
-    const isValid = Object.values({ ...address, [field]: value }).every(
-      (val) => val.trim() !== ""
-    );
-    setIsAddressValid(isValid);
+  const handleAddressChange = (updatedAddress) => {
+    setAddress(updatedAddress);
+    // const isValid = Object.values(updatedAddress).every(
+    //   (val) => val.trim() !== ""
+    // );
+    // setIsAddressValid(isValid);
+    console.log("This should receive data from addressscreen", updatedAddress);
   };
 
   const goToAddressScreen = () => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,15 +13,28 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 export default function AddressScreen() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { address, handleAddressChange } = route.params;
+  const { address: initialAddress, handleAddressChange } = route.params;
+  const [address, setAddress] = useState(initialAddress);
 
   const handleDone = () => {
     if (Object.values(address).some((val) => val.trim() === "")) {
       Alert.alert("Error, Please fill in all fields.");
       return;
     }
+    handleAddressChange(address);
     navigation.goBack();
   };
+
+  const handleChange = (field, value) => {
+    console.log(`Changing ${field} to ${value}`);
+    setAddress((prev) => ({ ...prev, [field]: value }));
+  };
+
+  console.log("Rerendering AddressScreen");
+
+  useEffect(() => {
+    console.log("State of the address screen", address);
+  }, [address]);
 
   return (
     <View style={StyleSheet.container}>
@@ -35,31 +48,31 @@ export default function AddressScreen() {
         style={styles.input}
         placeholder="Full Name"
         value={address.fullName}
-        onChangeText={(text) => handleAddressChange("fullName", text)}
+        onChangeText={(text) => handleChange("fullName", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Address"
         value={address.addressLine}
-        onChargeText={(text) => handleAddressChange("addressLine", text)}
+        onChangeText={(text) => handleChange("addressLine", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="City"
         value={address.city}
-        onChangeText={(text) => handleAddressChange("city", text)}
+        onChangeText={(text) => handleChange("city", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Email Address"
         value={address.emailAddress}
-        onChangeText={(text) => handleAddressChange("emailAddress", text)}
+        onChangeText={(text) => handleChange("emailAddress", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
         value={address.phoneNumber}
-        onChangeText={(text) => handleAddressChange("phoneNumber", text)}
+        onChangeText={(text) => handleChange("phoneNumber", text)}
       />
       <Pressable style={styles.doneButton} onPress={handleDone}>
         <Text style={styles.doneButtonText}>DONE</Text>
