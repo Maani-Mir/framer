@@ -127,15 +127,15 @@ function AlbumEntry({ album }) {
             <TouchableOpacity
               key={image.id}
               onPress={() => handlePress(image.uri)}
-              style={[
-                selectedImages.includes(image.uri) && styles.selectedImage,
-              ]}
             >
               <Image
+                style={[
+                  styles.imageStyle,
+                  selectedImages.includes(image.uri) && styles.selectedImage,
+                ]}
                 source={{ uri: image.uri }}
                 width={100}
                 height={100}
-                borderColor="white"
               />
             </TouchableOpacity>
           ))}
@@ -164,9 +164,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
+  imageStyle: {
+    borderColor: "white",
+    borderWidth: 3,
+  },
   selectedImage: {
     borderColor: "#EA9B3F",
-    borderWidth: 3,
+    // borderWidth: 3,
   },
   buttonStyle: {
     flex: 1,
