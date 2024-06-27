@@ -13,15 +13,22 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 export default function AddressScreen() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { address: initialAddress, handleAddressChange } = route.params;
-  const [address, setAddress] = useState(initialAddress);
+  const { onDone } = route.params;
+  //const { address: initialAddress, handleAddressChange } = route.params;
+  const [address, setAddress] = useState({
+    fullName: "",
+    addressLine: "",
+    city: "",
+    emailAddress: "",
+    phoneNumber: "",
+  });
 
   const handleDone = () => {
     if (Object.values(address).some((val) => val.trim() === "")) {
       Alert.alert("Error, Please fill in all fields.");
       return;
     }
-    handleAddressChange(address);
+    onDone(address);
     navigation.goBack();
   };
 

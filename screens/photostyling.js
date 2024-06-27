@@ -23,15 +23,9 @@ export default function PhotoStyling() {
   const [borderColor, setBorderColor] = useState("transparent");
   const { selectedImagesGlobal = [] } = route.params || {};
   const [modalVisible, setModalVisible] = useState(false);
-  const [address, setAddress] = useState({
-    fullName: "",
-    addressLine: "",
-    city: "",
-    emailAddress: "",
-    phoneNumber: "",
-  });
+  const [address, setAddress] = useState(null);
 
-  const [isAddressValid, setIsAddressValid] = useState(false);
+  //const [isAddressValid, setIsAddressValid] = useState(false);
 
   console.log("route params", route.params);
 
@@ -73,21 +67,42 @@ export default function PhotoStyling() {
   };
 
   const handlePlaceOrder = () => {
-    Alert.alert("Order Placed. Your order has been placed sucessfully!");
-    setModalVisible(false);
+    console.log("Order button is pressed");
+    if (!address || Object.values(address).some((val) => val.trim() === "")) {
+      Alert.alert("Error, Please fill in all address fields.");
+      return;
+    } else if (address) {
+      //order placement logic here
+      setModalVisible(false);
+      Alert.alert("Order placed sucessfully!");
+      console.log("This is the address", address);
+    }
   };
 
-  const handleAddressChange = (updatedAddress) => {
-    setAddress(updatedAddress);
-    // const isValid = Object.values(updatedAddress).every(
-    //   (val) => val.trim() !== ""
-    // );
-    // setIsAddressValid(isValid);
-    console.log("This should receive data from addressscreen", updatedAddress);
-  };
+  // const handleAddressChange = (updatedAddress) => {
+  //   setAddress(updatedAddress);
+  //   setModalVisible(true);
+  //   // const isValid = Object.values(updatedAddress).every(
+  //   //   (val) => val.trim() !== ""
+  //   // );
+  //   // setIsAddressValid(isValid);
+  //   console.log("This should receive data from addressscreen", updatedAddress);
+  //   //address = updatedAddress;
+  //   //console.log("This is the global address variable that is set", address);
+  // };
 
   const goToAddressScreen = () => {
-    navigation.navigate("AddressScreen", { address, handleAddressChange });
+    setModalVisible(false);
+    navigation.navigate("AddressScreen", {
+      onDone: (address) => {
+        setAddress(address);
+        setModalVisible(true);
+      },
+    });
+    // console.log(
+    //   "This should get the complete address from address screen",
+    //   address
+    // );
   };
 
   const framesCount = selectedImagesGlobal.length;
@@ -195,7 +210,7 @@ export default function PhotoStyling() {
               <Text style={styles.modalCloseButtonText}>X</Text>
             </Pressable>
             <Pressable style={styles.addressButton} onPress={goToAddressScreen}>
-              <Text style={styles.addressButtonText}>Address</Text>
+              <Text style={styles.addressButtonText}>Enter Address</Text>
             </Pressable>
             <Text style={styles.codText}>Cash on Delivery (COD)</Text>
             <View style={styles.orderDetails}>
@@ -230,7 +245,7 @@ export default function PhotoStyling() {
             <Pressable
               style={styles.placeOrderButton}
               onPress={handlePlaceOrder}
-              disabled={!isAddressValid}
+              // disabled={!isAddressValid}
             >
               <Text style={styles.placeOrderButtonText}>Place Order</Text>
             </Pressable>
