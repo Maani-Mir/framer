@@ -3,6 +3,7 @@ import GalleryAccess from "./GalleryAccess";
 import PhotoStyling from "./photostyling";
 import AddressScreen from "./addressscreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ImageAdjustScreen from "./imageadjust";
 
 export default function ImageSliderScreen() {
   const Stack = createNativeStackNavigator();
@@ -15,6 +16,7 @@ export default function ImageSliderScreen() {
       <Stack.Screen name="GalleryAccess" component={GalleryAccess} />
       <Stack.Screen name="PhotoStyling" component={PhotoStyling} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
+      <Stack.Screen name="ImageAdjustScreen" component={ImageAdjustScreen} />
     </Stack.Navigator>
   );
 }

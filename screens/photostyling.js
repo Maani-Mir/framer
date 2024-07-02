@@ -13,6 +13,7 @@ import {
   Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Parallelogram from "../components/parallelogram";
 // import { ScrollView } from "react-native-gesture-handler";
 
 // import GalleryAccess from "./GalleryAccess";
@@ -20,10 +21,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export default function PhotoStyling() {
   const route = useRoute();
   const navigation = useNavigation();
-  const [borderColor, setBorderColor] = useState("transparent");
-  const { selectedImagesGlobal = [] } = route.params || {};
+
+  const [borderColor, setBorderColor] = useState("white");
+  const [selectedImagesGlobal, setSelectedImagesGlobal] = useState(
+    route.params.selectedImagesGlobal || []
+  );
+
   const [modalVisible, setModalVisible] = useState(false);
+  const [imagePressModalVisible, setImagePressModalVisible] = useState(false);
+
   const [address, setAddress] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   //const [isAddressValid, setIsAddressValid] = useState(false);
 
@@ -41,6 +49,59 @@ export default function PhotoStyling() {
   //   </View>
   // );
 
+  const handleImagePress = (imageUri) => {
+    console.log("Image is pressed");
+    setSelectedImage(imageUri);
+    setImagePressModalVisible(true);
+  };
+
+  const handleRemove = () => {
+    console.log("remove button was pressed");
+
+    if (route.params.selectedImagesGlobal.length !== 3) {
+      console.log(
+        "number of images before cut",
+        route.params.selectedImagesGlobal.length
+      );
+      setSelectedImagesGlobal((prev) =>
+        prev.filter((image) => image != selectedImage)
+      );
+      // const updatedImages = selectedImagesGlobal.filter(
+      //   (image) => image !== currentImage
+      // );
+      // route.params.selectedImagesGlobal = updatedImages;
+      console.log(
+        "number of images after cut",
+        route.params.selectedImagesGlobal.length
+      );
+
+      setImagePressModalVisible(false);
+    } else {
+      Alert.alert("Error, atleast 3 images should be selected for styling.");
+      setImagePressModalVisible(false);
+      return;
+    }
+  };
+
+  const handleAdjust = () => {
+    console.log("adjust button was pressed");
+    setImagePressModalVisible(false);
+    navigation.navigate("ImageAdjustScreen", {
+      imageUri: selectedImage,
+
+      updateImage: (newImageUri) => {
+        setSelectedImagesGlobal((prev) =>
+          prev.map((image) => (image === selectedImage ? newImageUri : image))
+        );
+      },
+    });
+  };
+
+  const handleCancel = () => {
+    console.log("cancel button was pressed");
+    setImagePressModalVisible(false);
+  };
+
   if (selectedImagesGlobal.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -48,18 +109,35 @@ export default function PhotoStyling() {
       </View>
     );
   }
-
+  //renders the selected images for styling
   const renderItem = ({ item }) => (
-    <View style={styles.imageContainer}>
+    <Pressable
+      onPress={() => handleImagePress(item)}
+      style={styles.imageContainer}
+    >
       <View style={styles.frame}>
-        <Image
-          source={{ uri: item }}
-          style={[styles.image, { borderColor: borderColor }]}
-        />
+        <View style={[styles.main, { borderColor: borderColor }]}>
+          <Image source={{ uri: item }} style={styles.image} />
+        </View>
+        <Parallelogram
+          rotation="90deg"
+          width={296}
+          left={156.5}
+          top={147}
+          borderColorParallelogram={borderColor}
+        ></Parallelogram>
+        <Parallelogram
+          rotation="0deg"
+          width={296}
+          left={4.5}
+          top={300}
+          borderColorParallelogram={borderColor}
+        ></Parallelogram>
+        {/* <View style={styles.after}></View> */}
       </View>
       {/* <Text style={styles.uriText}>{item}</Text>
       <Text style={styles.imageText}>Styled Image</Text> */}
-    </View>
+    </Pressable>
   );
 
   const handleCheckout = () => {
@@ -195,6 +273,7 @@ export default function PhotoStyling() {
       <Pressable style={styles.checkoutbuttonStyle} onPress={handleCheckout}>
         <Text style={styles.checkoutbuttonText}>CHECKOUT</Text>
       </Pressable>
+      {/* Checkout Model */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -252,6 +331,33 @@ export default function PhotoStyling() {
           </View>
         </View>
       </Modal>
+      {/* Image Press Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={imagePressModalVisible}
+        onRequestClose={() => setImagePressModalVisible(false)}
+      >
+        <View style={styles.modalView}>
+          <View style={styles.modalContent}>
+            <Pressable
+              style={styles.modalCloseButton}
+              onPress={() => setImagePressModalVisible(false)}
+            >
+              <Text style={styles.modalCloseButtonText}>X</Text>
+            </Pressable>
+            <Pressable style={styles.buttonImagePress} onPress={handleRemove}>
+              <Text style={styles.textImagePressStyle}>Remove</Text>
+            </Pressable>
+            <Pressable style={styles.buttonImagePress} onPress={handleAdjust}>
+              <Text style={styles.textImagePressStyle}>Adjust</Text>
+            </Pressable>
+            <Pressable style={styles.buttonImagePress} onPress={handleCancel}>
+              <Text style={styles.textImagePressStyle}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
     // <Text>This is the part where we style our photos</Text>
     // <TestComponent />
@@ -274,20 +380,52 @@ const styles = StyleSheet.create({
     //borderWidth: 1,
     //borderColor: "black",
     //borderRadius: 10,
-    overflow: "hidden",
+    position: "relative",
+    // overflow: "hidden",
     elevation: 25, // Add elevation for shadow effect (Android)
     shadowColor: "black", // Shadow color (iOS)
     shadowOffset: { width: 0, height: 2 }, // Shadow offset (iOS)
     shadowOpacity: 0.3, // Shadow opacity (iOS)
     shadowRadius: 4, // Shadow radius (iOS)
   },
+  main: {
+    // position: "relative",
+    width: 300,
+    height: 300,
+    overflow: "hidden",
+    borderWidth: 10,
+    borderColor: "white",
+    boxShadow: "inset 2px 2px 10px #888888, 20px 20px 20px #888888",
+    position: "relative",
+  },
   image: {
     width: 300,
     height: 300,
     resizeMode: "cover",
     borderWidth: 10,
-    borderColor: "grey",
+    position: "relative",
+    // borderColor: "grey",
     // resizeMode: "cover",
+  },
+  before: {
+    backgroundColor: "#E5E7E9",
+    height: 300,
+    width: 10,
+    position: "absolute",
+    top: 0,
+    left: 300,
+    transform: [{ skewY: "0.5deg" }],
+    zIndex: 10,
+  },
+  after: {
+    backgroundColor: "#A6ACAF",
+    height: 10,
+    width: 300,
+    position: "absolute",
+    top: 300,
+    left: 0,
+    transform: [{ skewX: "45deg" }],
+    zIndex: 20,
   },
 
   imageText: {
@@ -344,6 +482,19 @@ const styles = StyleSheet.create({
   },
   modalCloseButtonText: {
     fontSize: 18,
+    fontWeight: "bold",
+  },
+  buttonImagePress: {
+    backgroundColor: "#EA9B3F",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginVertical: 5,
+    width: 100,
+    alignItems: "center",
+  },
+  textImagePressStyle: {
+    color: "white",
     fontWeight: "bold",
   },
   addressButton: {
