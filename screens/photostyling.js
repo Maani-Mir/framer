@@ -188,17 +188,11 @@ export default function PhotoStyling() {
   const extraFramesCost = extraFramesCount * 500;
   const totalCost = 1500 + extraFramesCost;
 
-  const pressPink = () => {
-    setBorderColor("#FF00FF");
-  };
   const pressBlack = () => {
     setBorderColor("#000000");
   };
   const pressWhite = () => {
     setBorderColor("#FFFFFF");
-  };
-  const pressRed = () => {
-    setBorderColor("#FF0000");
   };
 
   return (
@@ -232,18 +226,8 @@ export default function PhotoStyling() {
           onPress={pressBlack}
         ></Pressable>
         <Pressable
-          style={styles.buttonPinkStyle}
-          onPress={pressPink}
-          // onPress={() => navigation.navigate(GalleryAccess)}
-        ></Pressable>
-        <Pressable
           style={styles.buttonWhiteStyle}
           onPress={pressWhite}
-          // onPress={() => navigation.navigate(GalleryAccess)}
-        ></Pressable>
-        <Pressable
-          style={styles.buttonRedStyle}
-          onPress={pressRed}
           // onPress={() => navigation.navigate(GalleryAccess)}
         ></Pressable>
       </View>
@@ -251,14 +235,9 @@ export default function PhotoStyling() {
         <View style={styles.textBlack}>
           <Text>Black</Text>
         </View>
-        <View style={styles.textPink}>
-          <Text>Pink</Text>
-        </View>
+
         <View style={styles.textWhite}>
           <Text>White</Text>
-        </View>
-        <View style={styles.textRed}>
-          <Text>Red</Text>
         </View>
       </View>
       <FlatList
@@ -560,12 +539,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonClassicText: { fontSize: 15, color: "white", fontWeight: "bold" },
+
   buttonBlackStyle: {
     marginTop: 12,
-    marginLeft: 18,
+    marginLeft: 4,
     backgroundColor: "#000000",
     // position: "absolute",
-    width: 75,
+    width: 200,
     height: 43,
     // paddingHorizontal: 20,
     // paddingVertical: 24,
@@ -573,25 +553,13 @@ const styles = StyleSheet.create({
     borderColor: "#000000",
     borderWidth: 0.5,
   },
-  buttonPinkStyle: {
-    marginTop: 12,
-    marginLeft: 25,
-    backgroundColor: "#FF00FF",
-    // position: "absolute",
-    width: 75,
-    height: 43,
-    // paddingHorizontal: 20,
-    // paddingVertical: 24,
-    borderRadius: 5,
-    borderColor: "#000000",
-    borderWidth: 0.5,
-  },
+
   buttonWhiteStyle: {
     marginTop: 12,
-    marginLeft: 25,
+    marginLeft: 4,
     backgroundColor: "#FFFFFF",
     // position: "absolute",
-    width: 75,
+    width: 200,
     height: 43,
     // paddingHorizontal: 20,
     // paddingVertical: 24,
@@ -599,35 +567,17 @@ const styles = StyleSheet.create({
     borderColor: "#000000",
     borderWidth: 0.5,
   },
-  buttonRedStyle: {
-    marginTop: 12,
-    marginLeft: 25,
-    backgroundColor: "#FF0000",
-    // position: "absolute",
-    width: 75,
-    height: 43,
-    // paddingHorizontal: 20,
-    // paddingVertical: 10,
-    borderRadius: 5,
-    borderColor: "#000000",
-    borderWidth: 0.5,
-  },
+
   textBlack: {
     marginTop: 17,
-    marginLeft: 40,
+    marginLeft: 90,
   },
-  textPink: {
-    marginTop: 17,
-    marginLeft: 72,
-  },
+
   textWhite: {
     marginTop: 17,
-    marginLeft: 70,
+    marginLeft: 170,
   },
-  textRed: {
-    marginTop: 17,
-    marginLeft: 74,
-  },
+
   checkoutbuttonStyle: {
     flex: 1,
     marginTop: 700,

@@ -60,10 +60,6 @@ function colorBorders(borderColorParallelogram) {
   console.log("start of triangle color", triangleColor);
   //for pink
   switch (borderColorParallelogram) {
-    case "#FF00FF":
-      innerColor = { backgroundColor: "#BF00BF" };
-      triangleColor = { borderBottomColor: "#BF00BF" };
-      break;
     case "#000000":
       innerColor = { backgroundColor: "#2B2B2B" };
       triangleColor = { borderBottomColor: "#2B2B2B" };
@@ -72,10 +68,7 @@ function colorBorders(borderColorParallelogram) {
       innerColor = { backgroundColor: "#D4D4D4" };
       triangleColor = { borderBottomColor: "#D4D4D4" };
       break;
-    case "#FF0000":
-      innerColor = { backgroundColor: "#AD0202" };
-      triangleColor = { borderBottomColor: "#AD0202" };
-      break;
+
     default:
       innerColor = { backgroundColor: "#D4D4D4" };
       triangleColor = { borderBottomColor: "#D4D4D4" };
