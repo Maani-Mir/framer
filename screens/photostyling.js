@@ -32,6 +32,8 @@ export default function PhotoStyling() {
 
   const [address, setAddress] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [resizeMode, setResizeMode] = useState("cover");
+  const [activeStyle, setActiveStyle] = useState("bold");
 
   //const [isAddressValid, setIsAddressValid] = useState(false);
 
@@ -117,7 +119,10 @@ export default function PhotoStyling() {
     >
       <View style={styles.frame}>
         <View style={[styles.main, { borderColor: borderColor }]}>
-          <Image source={{ uri: item }} style={styles.image} />
+          <Image
+            source={{ uri: item }}
+            style={[styles.image, { resizeMode }]}
+          />
         </View>
         <Parallelogram
           rotation="90deg"
@@ -194,6 +199,17 @@ export default function PhotoStyling() {
   const pressWhite = () => {
     setBorderColor("#FFFFFF");
   };
+  const pressBold = () => {
+    setResizeMode("cover");
+    setActiveStyle("bold");
+    return;
+  };
+
+  const pressClassic = () => {
+    setResizeMode("center");
+    setActiveStyle("classic");
+    return;
+  };
 
   return (
     // <View>
@@ -208,14 +224,20 @@ export default function PhotoStyling() {
     <View>
       <View style={styles.weightStyle}>
         <Pressable
-          style={styles.buttonBoldStyle}
-          // onPress={pressBold}
+          style={[
+            styles.buttonBoldStyle,
+            activeStyle === "bold" && styles.activeButtonStyle,
+          ]}
+          onPress={pressBold}
         >
           <Text style={styles.buttonBoldText}>BOLD</Text>
         </Pressable>
         <Pressable
-          style={styles.buttonClassicStyle}
-          // onPress={() => }
+          style={[
+            styles.buttonClassicStyle,
+            activeStyle === "classic" && styles.activeButtonStyle,
+          ]}
+          onPress={pressClassic}
         >
           <Text style={styles.buttonClassicText}>CLASSIC</Text>
         </Pressable>
@@ -359,6 +381,7 @@ const styles = StyleSheet.create({
     //borderWidth: 1,
     //borderColor: "black",
     //borderRadius: 10,
+
     position: "relative",
     // overflow: "hidden",
     elevation: 25, // Add elevation for shadow effect (Android)
@@ -380,7 +403,7 @@ const styles = StyleSheet.create({
   image: {
     width: 300,
     height: 300,
-    resizeMode: "cover",
+    // resizeMode: "cover",
     borderWidth: 10,
     position: "relative",
     // borderColor: "grey",
@@ -516,7 +539,7 @@ const styles = StyleSheet.create({
   buttonBoldStyle: {
     marginTop: 2,
     marginLeft: 4,
-    backgroundColor: "#E38417",
+    backgroundColor: "#EBAE68",
     // position: "absolute",
     width: 200,
     paddingHorizontal: 20,
@@ -591,4 +614,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
   },
   checkoutbuttonText: { fontSize: 15, color: "white", fontWeight: "bold" },
+  activeButtonStyle: {
+    backgroundColor: "#E38417",
+  },
 });
