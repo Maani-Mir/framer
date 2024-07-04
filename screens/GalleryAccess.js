@@ -54,7 +54,8 @@ export default function GalleryAccess({ navigation }) {
           data={albums.map}
           renderItem={({ album }) => <AlbumEntry album={album} />}
         /> */}
-        {albums && albums.map((album) => <AlbumEntry album={album} />)}
+        {albums &&
+          albums.map((album) => <AlbumEntry key={album.id} album={album} />)}
       </ScrollView>
       <Pressable style={styles.buttonStyle} onPress={handleProceed}>
         <Text style={styles.buttonText}>STYLE YOUR PHOTO</Text>
