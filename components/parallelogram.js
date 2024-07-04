@@ -11,10 +11,10 @@ function Parallelogram({
   borderColorParallelogram,
 }) {
   const colors = colorBorders(borderColorParallelogram);
-  console.log("this is the inner color", colors.innerColor);
-  console.log("this is the triangle color", colors.triangleColor);
+  //console.log("this is the inner color", colors.innerColor);
+  //console.log("this is the triangle color", colors.triangleColor);
 
-  console.log("not even at the start of component?", borderColorParallelogram);
+  //console.log("not even at the start of component?", borderColorParallelogram);
   return (
     <View style={styles.parallelogram(rotation, width, left, top)}>
       <View
@@ -42,7 +42,7 @@ function Parallelogram({
 }
 
 function smoother(rotationParam, check) {
-  console.log("this is the rotation param", rotationParam);
+  //console.log("this is the rotation param", rotationParam);
   if (check && rotationParam == "90deg") {
     return styles.triangleDown;
   } else if (!check && rotationParam == "0deg") {
@@ -52,12 +52,9 @@ function smoother(rotationParam, check) {
 }
 
 function colorBorders(borderColorParallelogram) {
-  console.log(
-    "are we getting the border color here?",
-    borderColorParallelogram
-  );
+  //console.log("are we getting the border color here?",borderColorParallelogram);
   let innerColor, triangleColor;
-  console.log("start of triangle color", triangleColor);
+  //console.log("start of triangle color", triangleColor);
   //for pink
   switch (borderColorParallelogram) {
     case "#000000":

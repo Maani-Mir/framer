@@ -1,8 +1,16 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View, Image, Button, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Image,
+  Button,
+  StyleSheet,
+  Alert,
+  Pressable,
+  Text,
+} from "react-native";
 
-//import {} from "react-native-image-crop-picker";
+import ImageCropPicker from "react-native-image-crop-picker";
 
 import * as ImageManipulator from "expo-image-manipulator";
 //import { CropView } from "expo-image-crop";
@@ -15,9 +23,29 @@ export default function ImageAdjustScreen({ navigation }) {
   const { imageUri, updateImage } = route.params;
   const [croppedImageUri, setCroppedImageUri] = useState(imageUri);
 
-  const [showCropView, setShowCropView] = useState(true);
-  const cropViewRef = React.useRef();
+  //below two statements are related to "CropView"
+  //  const [showCropView, setShowCropView] = useState(true);
+  //  const cropViewRef = React.useRef();
+  console.log("should get an image at start here", imageUri);
+  //--------image crop picker code
+  const cropImage = () => {
+    ImageCropPicker.openCropper({
+      path: imageUri,
+      width: 300,
+      height: 400,
+    })
+      .then((image) => {
+        console.log("We should get some sorta image here", image);
+        setCroppedImageUri(image.path);
+      })
+      .catch((error) => {
+        console.error("Error cropping image: ", error);
+        Alert.alert("Error, Failed to crop image");
+      });
+  };
 
+  //-------manipulator code start
+  /*
   const cropImage = async () => {
     try {
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -31,11 +59,13 @@ export default function ImageAdjustScreen({ navigation }) {
       Alert.alert("Error, Failed to crop image");
     }
   };
-
+*/
   const handleDone = () => {
     updateImage(croppedImageUri);
     navigation.goBack();
   };
+
+  //------manipulator code end
 
   // const handleDone = async () => {
   //   if (showCropView) {
@@ -52,8 +82,15 @@ export default function ImageAdjustScreen({ navigation }) {
     //manipulator code
     <View style={styles.container}>
       <Image source={{ uri: croppedImageUri }} style={styles.image} />
-      <Button title="Crop Image" onPress={cropImage} />
-      <Button title="Done" onPress={handleDone} />
+
+      <Pressable style={styles.cropButton} onPress={cropImage}>
+        <Text style={styles.cropButtonText}>CROP IMAGE HERE</Text>
+      </Pressable>
+      {/* <Button title="Crop Image" onPress={cropImage} /> */}
+      <Pressable style={styles.doneButton} onPress={handleDone}>
+        <Text style={styles.doneButtonText}>DONE</Text>
+      </Pressable>
+      {/* <Button title="Done" onPress={handleDone} /> */}
     </View>
 
     // <View style={styles.container}>
@@ -77,6 +114,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  cropButton: {
+    backgroundColor: "#EA9B3F",
+    padding: 18,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  cropButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  doneButton: {
+    backgroundColor: "#EA9B3F",
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 15,
+  },
+  doneButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
   cropView: {
     width: 300,

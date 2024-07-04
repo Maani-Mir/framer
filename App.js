@@ -1,6 +1,7 @@
 import "react-native-gesture-handler";
 
 import React, { Fragment } from "react";
+import "expo-dev-client";
 import Icon from "react-native-vector-icons/Entypo";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { StatusBar } from "react-native";
