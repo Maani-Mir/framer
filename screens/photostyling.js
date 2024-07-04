@@ -21,18 +21,25 @@ import Parallelogram from "../components/parallelogram";
 export default function PhotoStyling() {
   const route = useRoute();
   const navigation = useNavigation();
-
+  // state to hold the border color of the styled images
   const [borderColor, setBorderColor] = useState("white");
+
+  //state to hold the updated array of images selected for styling
   const [selectedImagesGlobal, setSelectedImagesGlobal] = useState(
     route.params.selectedImagesGlobal || []
   );
 
+  // this state is set when the user presses checkout that gives order details
   const [modalVisible, setModalVisible] = useState(false);
+  // this state is set when the user presses the styled image for cropping or removing
   const [imagePressModalVisible, setImagePressModalVisible] = useState(false);
-
+  // this state is to keep the address of the user
   const [address, setAddress] = useState(null);
+  //state to hold which image we are at in the array of images selected for styling
   const [selectedImage, setSelectedImage] = useState(null);
+  // for classic and bold functionality
   const [resizeMode, setResizeMode] = useState("cover");
+  // for changing colors of classic and bold colors
   const [activeStyle, setActiveStyle] = useState("bold");
 
   //const [isAddressValid, setIsAddressValid] = useState(false);
@@ -262,6 +269,7 @@ export default function PhotoStyling() {
           <Text>White</Text>
         </View>
       </View>
+
       <FlatList
         data={selectedImagesGlobal}
         renderItem={renderItem}
@@ -294,33 +302,26 @@ export default function PhotoStyling() {
             </Pressable>
             <Text style={styles.codText}>Cash on Delivery (COD)</Text>
             <View style={styles.orderDetails}>
-              <Text>
-                3 frames for Rs.1500
-                {"                                       "}
-                Rs.1500
-              </Text>
+              <View style={styles.row}>
+                <Text>3 frames for Rs.1500</Text>
+                <Text>Rs.1500</Text>
+              </View>
 
               {extraFramesCount > 0 && (
-                <>
-                  <Text>
-                    {extraFramesCount} more frames, 500 each
-                    {"                             "}Rs.{extraFramesCost}
-                  </Text>
-                </>
+                <View style={styles.row}>
+                  <Text>{extraFramesCount} more frames, 500 each</Text>
+                  <Text>Rs.{extraFramesCost}</Text>
+                </View>
               )}
-              <Text>
-                Delivered within 1 week{"                                    "}
-                FREE
-              </Text>
+              <View style={styles.row}>
+                <Text>Delivered within 1 week</Text>
+                <Text>FREE</Text>
+              </View>
 
-              <Text>
-                Total
-                {
-                  "                                                                     "
-                }
-                Rs.
-                {totalCost}
-              </Text>
+              <View style={styles.row}>
+                <Text>Total</Text>
+                <Text>Rs.{totalCost}</Text>
+              </View>
             </View>
             <Pressable
               style={styles.placeOrderButton}
@@ -518,6 +519,11 @@ const styles = StyleSheet.create({
   orderDetails: {
     width: "100%",
     marginBottom: 20,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 3,
   },
   placeOrderButton: {
     padding: 10,
