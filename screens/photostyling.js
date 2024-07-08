@@ -276,8 +276,7 @@ export default function PhotoStyling() {
         keyExtractor={(item, index) => index.toString()}
         horizontal
         pagingEnabled
-
-        // contentContainerStyle={styles.container}
+        showsHorizontalScrollIndicator
       />
       <Pressable style={styles.checkoutbuttonStyle} onPress={handleCheckout}>
         <Text style={styles.checkoutbuttonText}>CHECKOUT</Text>

@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
+import React, { useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Animated,
+} from "react-native";
 
 import sliderdata from "../content/sliderdata";
 import SliderItem from "./SliderItem";
@@ -7,10 +14,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 //import { StackNavigator } from "react-navigation";
 import GalleryAccess from "../screens/GalleryAccess";
-
 // import GalleryAccess from "../screens/GalleryAccess";
+import Paginator from "./paginator";
+import paginator from "./paginator";
+//import paginator from "./paginator";
 
 export default ImageSlider = ({ navigation }) => {
+  const scrollX = useRef(new Animated.Value(0)).current;
   return (
     <View style={{ flex: 1 }}>
       <FlatList
@@ -18,6 +28,13 @@ export default ImageSlider = ({ navigation }) => {
         renderItem={({ item }) => <SliderItem item={item} />}
         horizontal
         pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          {
+            useNativeDriver: false,
+          }
+        )}
       />
       <Pressable
         style={styles.buttonStyle}
@@ -25,6 +42,7 @@ export default ImageSlider = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>GET STARTED</Text>
       </Pressable>
+      <Paginator data={sliderdata} scrollX={scrollX} />
     </View>
   );
 };
