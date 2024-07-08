@@ -11,6 +11,7 @@ import {
   FlatList,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -19,9 +20,30 @@ import PhotoStyling from "./photostyling";
 
 var selectedImagesGlobal = new Array();
 
+// async function getAlbums(setAlbums, permissionResponse, requestPermission) {
+//   if (permissionResponse.status !== "granted") {
+//     await requestPermission();
+//   }
+//   const fetchedAlbums = await MediaLibrary.getAlbumAsync({
+//     includeSmartAlbums: true,
+//   });
+//   setAlbums(fetchedAlbums);
+// }
+
+// async function getAlbumAssets(album, setAssets, setLoading) {
+//   setLoading(true);
+//   const albumAssets = await MediaLibrary.getAssetsAsync({
+//     album,
+//     first: 20,
+//   });
+//   setAssets(albumAssets.assets);
+//   setLoading(false);
+// }
+
 export default function GalleryAccess({ navigation }) {
   const [albums, setAlbums] = useState(null);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
+  const [selectedCount, setSelectedCount] = useState([]);
 
   useEffect(() => {
     async function getAlbums() {
@@ -34,7 +56,11 @@ export default function GalleryAccess({ navigation }) {
       setAlbums(fetchedAlbums);
     }
     getAlbums();
-  });
+  }, [permissionResponse]);
+
+  const handleImageSelection = (updatedSelection) => {
+    setSelectedCount([...updatedSelection]);
+  };
 
   const handleProceed = () => {
     if (selectedImagesGlobal.length < 3) {
@@ -48,14 +74,18 @@ export default function GalleryAccess({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Button onPress={getAlbums} title="Get albums" /> */}
+      <Text style={styles.headerSelectedImagesText}>
+        Selected Images: {selectedImagesGlobal.length}
+      </Text>
       <ScrollView>
-        {/* <FlatList
-          data={albums.map}
-          renderItem={({ album }) => <AlbumEntry album={album} />}
-        /> */}
         {albums &&
-          albums.map((album) => <AlbumEntry key={album.id} album={album} />)}
+          albums.map((album) => (
+            <AlbumEntry
+              key={album.id}
+              album={album}
+              onImageSelect={handleImageSelection}
+            />
+          ))}
       </ScrollView>
       <Pressable style={styles.buttonStyle} onPress={handleProceed}>
         <Text style={styles.buttonText}>STYLE YOUR PHOTO</Text>
@@ -64,17 +94,20 @@ export default function GalleryAccess({ navigation }) {
   );
 }
 
-function AlbumEntry({ album }) {
+function AlbumEntry({ album, onImageSelect }) {
   const [assets, setAssets] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getAlbumAssets() {
+      setLoading(true);
       const albumAssets = await MediaLibrary.getAssetsAsync({
         album,
         first: 20,
       });
       setAssets(albumAssets.assets);
+      setLoading(false);
     }
     getAlbumAssets();
   }, [album]);
@@ -85,6 +118,9 @@ function AlbumEntry({ album }) {
         const updatedSelection = prevSelectedImages.filter(
           (imageUri) => imageUri !== uri
         );
+        //to show how many images are selected
+        onImageSelect(updatedSelection);
+
         console.log("updatedSelection", updatedSelection);
         // selectedImagesGlobal = selectedImagesGlobal.concat(updatedSelection);
         selectedImagesGlobal = updatedSelection;
@@ -100,6 +136,9 @@ function AlbumEntry({ album }) {
       } else {
         const updatedSelection = [...prevSelectedImages, uri];
         //console.log("Selected Images before global", updatedSelection);
+
+        //to show how many images are selected
+        onImageSelect(updatedSelection);
 
         selectedImagesGlobal = selectedImagesGlobal.concat(updatedSelection);
         selectedImagesGlobal = [...new Set(selectedImagesGlobal)];
@@ -120,27 +159,35 @@ function AlbumEntry({ album }) {
 
   return (
     <View key={album.id} style={styles.albumContainer}>
-      <Text>{album.title}</Text>
-      <View style={styles.albumAssetsContainer}>
-        {assets &&
-          assets.map((image) => (
-            // console.log(image)
-            <TouchableOpacity
-              key={image.id}
-              onPress={() => handlePress(image.uri)}
-            >
-              <Image
-                style={[
-                  styles.imageStyle,
-                  selectedImages.includes(image.uri) && styles.selectedImage,
-                ]}
-                source={{ uri: image.uri }}
-                width={100}
-                height={100}
-              />
-            </TouchableOpacity>
-          ))}
-      </View>
+      <Text style={styles.albumNameStyle}>{album.title}</Text>
+      {loading ? (
+        <ActivityIndicator size="small" color="#EA9B3F" />
+      ) : (
+        <View style={styles.albumAssetsContainer}>
+          {assets.length === 0 ? (
+            <Text style={styles.noResultsText}>0 results</Text>
+          ) : (
+            assets &&
+            assets.map((image) => (
+              // console.log(image)
+              <TouchableOpacity
+                key={image.id}
+                onPress={() => handlePress(image.uri)}
+              >
+                <Image
+                  style={[
+                    styles.imageStyle,
+                    selectedImages.includes(image.uri) && styles.selectedImage,
+                  ]}
+                  source={{ uri: image.uri }}
+                  width={100}
+                  height={100}
+                />
+              </TouchableOpacity>
+            ))
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -156,6 +203,12 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  headerSelectedImagesText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 10,
+    textAlign: "center",
+  },
   albumContainer: {
     paddingHorizontal: 5,
     marginBottom: 5,
@@ -165,9 +218,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
+  albumNameStyle: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
   imageStyle: {
     borderColor: "white",
     borderWidth: 3,
+  },
+  noResultsText: {
+    fontSize: 16,
   },
   selectedImage: {
     borderColor: "#EA9B3F",

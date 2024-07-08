@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   FlatList,
   Pressable,
   Animated,
+  ActivityIndicator,
 } from "react-native";
 
 import sliderdata from "../content/sliderdata";
@@ -16,11 +17,28 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import GalleryAccess from "../screens/GalleryAccess";
 // import GalleryAccess from "../screens/GalleryAccess";
 import Paginator from "./paginator";
-import paginator from "./paginator";
-//import paginator from "./paginator";
 
 export default ImageSlider = ({ navigation }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 500); // Simulate a 5-second loading time
+
+  //   return () => clearTimeout(timer);
+  // }, []);
+
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size="large" color="#EA9B3F" />
+  //     </View>
+  //   );
+  // }
+
   return (
     <View style={{ flex: 1 }}>
       <FlatList
@@ -36,6 +54,7 @@ export default ImageSlider = ({ navigation }) => {
           }
         )}
       />
+
       <Pressable
         style={styles.buttonStyle}
         onPress={() => navigation.navigate(GalleryAccess)}

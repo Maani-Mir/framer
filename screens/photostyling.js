@@ -44,9 +44,9 @@ export default function PhotoStyling() {
 
   //const [isAddressValid, setIsAddressValid] = useState(false);
 
-  console.log("route params", route.params);
+  //console.log("route params", route.params);
 
-  console.log("Selected Images on photo styling", selectedImagesGlobal);
+  //console.log("Selected Images on photo styling", selectedImagesGlobal);
 
   // const TestComponent = () => (
   //   <View style={styles.container}>
@@ -228,7 +228,7 @@ export default function PhotoStyling() {
     //     ))}
     //   </ScrollView>
     // </View>
-    <View>
+    <View /*style={[styles.container, { alignSelf: "center" }]}*/>
       <View style={styles.weightStyle}>
         <Pressable
           style={[
@@ -277,6 +277,7 @@ export default function PhotoStyling() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator
+        // contentContainerStyle={styles.flatListContent}
       />
       <Pressable style={styles.checkoutbuttonStyle} onPress={handleCheckout}>
         <Text style={styles.checkoutbuttonText}>CHECKOUT</Text>
@@ -366,17 +367,23 @@ export default function PhotoStyling() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-  },
+  // container: {
+  //   flex: 1,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   padding: 10,
+  // },
   imageContainer: {
     marginTop: 100,
     margin: 55,
     justifyContent: "center",
     alignItems: "center",
   },
+  // flatListContent: {
+  //   flexGrow: 1,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
   frame: {
     //borderWidth: 1,
     //borderColor: "black",

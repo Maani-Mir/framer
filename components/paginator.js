@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Animated, useWindowDimensions } from "react-native";
 
 export default Paginator = ({ data, scrollX }) => {
-  console.log("this is the data from image slider", data);
+  //console.log("this is the data from image slider", data);
   const { width } = useWindowDimensions();
   return (
     <View style={styles.paginatorView}>

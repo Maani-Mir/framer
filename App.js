@@ -1,9 +1,15 @@
 import "react-native-gesture-handler";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import "expo-dev-client";
 import Icon from "react-native-vector-icons/Entypo";
-import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import { StatusBar } from "react-native";
 import ImageSlider from "./components/ImageSlider";
 import AboutUs from "./screens/about";
@@ -131,6 +137,23 @@ function MyDrawer() {
 }
 
 export default App = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Simulate a 5-second loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#EA9B3F" />
+      </View>
+    );
+  }
   return (
     <NavigationContainer>
       <MyDrawer />
@@ -138,66 +161,10 @@ export default App = () => {
   );
 };
 
-/*
-const headerStyle = (navigation) => {
-  return {
-    drawerPosition: "right",
-    headerLeft: false,
-    headerRight: () => (
-      <Icon
-        name="menu"
-        size={20}
-        color="black"
-        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-      />
-    ),
-  };
-};
-*/
-const styles = StyleSheet.create({});
-
-/*
-function HomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to ImageSlider"
-        onPress={() => navigation.navigate("ImageSlider")}
-      />
-    </View>
-  );
-}
-*/
-/*
-function MyDrawer() {
-  return (
-    
-  );
-}
-*/
-/*
-
-
-
-
-<Stack.Screen name="Feed" component={Feed} />
-<Stack.Screen name="Article" component={Article} />
-
-*/
-
-/*
-const DrawerNav = () => {
-  const Drawer = createDrawerNavigator();
-  return (
-    <Drawer.Navigator
-      drawerContent={(props) => <DrawerContent {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Drawer.Screen name="Home" component={StackNav} />
-    </Drawer.Navigator>
-  );
-};
-*/
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
