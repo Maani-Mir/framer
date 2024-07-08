@@ -92,7 +92,7 @@ export default function AddressScreen() {
           keyboardType="phone-pad"
         />
         <Pressable style={styles.doneButton} onPress={handleDone}>
-          <Text style={styles.doneButtonText}>DONE</Text>
+          <Text style={styles.doneButtonText}>PLACE ORDER</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -120,12 +120,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
-    borderRadius: 5,
+    borderRadius: 7,
   },
   doneButton: {
     backgroundColor: "#EA9B3F",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 7,
     alignItems: "center",
   },
   doneButtonText: {

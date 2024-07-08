@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   cropButton: {
     backgroundColor: "#EA9B3F",
     padding: 18,
-    borderRadius: 5,
+    borderRadius: 7,
     alignItems: "center",
   },
   cropButtonText: {
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   doneButton: {
     backgroundColor: "#EA9B3F",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 7,
     alignItems: "center",
     marginTop: 15,
   },

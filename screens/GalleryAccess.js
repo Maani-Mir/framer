@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 20,
     paddingVertical: 18,
-    borderRadius: 10,
+    borderRadius: 7,
   },
   buttonText: { fontSize: 15, color: "white", fontWeight: "bold" },
 });

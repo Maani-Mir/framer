@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 30,
     paddingVertical: 18,
-    borderRadius: 10,
+    borderRadius: 7,
   },
   buttonText: { fontSize: 20, color: "white", fontWeight: "bold" },
 });

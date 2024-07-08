@@ -4,6 +4,7 @@ import PhotoStyling from "./photostyling";
 import AddressScreen from "./addressscreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ImageAdjustScreen from "./imageadjust";
+import MyOrders from "./orders";
 
 export default function ImageSliderScreen() {
   const Stack = createNativeStackNavigator();
@@ -17,6 +18,7 @@ export default function ImageSliderScreen() {
       <Stack.Screen name="PhotoStyling" component={PhotoStyling} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="ImageAdjustScreen" component={ImageAdjustScreen} />
+      <Stack.Screen name="OrdersScreen" component={MyOrders} />
     </Stack.Navigator>
   );
 }

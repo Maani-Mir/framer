@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import {
   View,
@@ -31,8 +31,10 @@ export default function PhotoStyling() {
 
   // this state is set when the user presses checkout that gives order details
   const [modalVisible, setModalVisible] = useState(false);
+  //order placed successfull modal
+  const [modalOrderSuccess, setModalOrderSuccess] = useState(false);
   // this state is set when the user presses the styled image for cropping or removing
-  const [imagePressModalVisible, setImagePressModalVisible] = useState(false);
+  const [currentVisibleIndex, setCurrentVisibleIndex] = useState(0);
   // this state is to keep the address of the user
   const [address, setAddress] = useState(null);
   //state to hold which image we are at in the array of images selected for styling
@@ -58,58 +60,66 @@ export default function PhotoStyling() {
   //   </View>
   // );
 
-  const handleImagePress = (imageUri) => {
-    console.log("Image is pressed");
-    setSelectedImage(imageUri);
-    setImagePressModalVisible(true);
-  };
+  // const handleImagePress = (imageUri) => {
+  //   console.log("Image is pressed");
+  //   setSelectedImage(imageUri);
+  //   setImagePressModalVisible(true);
+  // };
+
+  // callback to handle visible items change
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems && viewableItems.length > 0) {
+      setCurrentVisibleIndex(viewableItems[0].index);
+    }
+  }).current;
+
+  // viewability config for flatlist
+  const viewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
   const handleRemove = () => {
     console.log("remove button was pressed");
 
-    if (route.params.selectedImagesGlobal.length !== 3) {
-      console.log(
-        "number of images before cut",
-        route.params.selectedImagesGlobal.length
-      );
+    if (selectedImagesGlobal.length > 3) {
+      console.log("number of images before cut", selectedImagesGlobal.length);
+      console.log("Images before cut", selectedImagesGlobal);
       setSelectedImagesGlobal((prev) =>
-        prev.filter((image) => image != selectedImage)
+        prev.filter((_, index) => index != currentVisibleIndex)
       );
       // const updatedImages = selectedImagesGlobal.filter(
       //   (image) => image !== currentImage
       // );
       // route.params.selectedImagesGlobal = updatedImages;
-      console.log(
-        "number of images after cut",
-        route.params.selectedImagesGlobal.length
-      );
-
-      setImagePressModalVisible(false);
+      console.log("number of images after cut", selectedImagesGlobal.length);
+      console.log("Images after cut", selectedImagesGlobal);
+      //setImagePressModalVisible(false);
     } else {
       Alert.alert("Error, atleast 3 images should be selected for styling.");
-      setImagePressModalVisible(false);
+      //setImagePressModalVisible(false);
       return;
     }
   };
 
   const handleAdjust = () => {
     console.log("adjust button was pressed");
-    setImagePressModalVisible(false);
+    //setImagePressModalVisible(false);
     navigation.navigate("ImageAdjustScreen", {
-      imageUri: selectedImage,
-
+      imageUri: selectedImagesGlobal[currentVisibleIndex],
       updateImage: (newImageUri) => {
         setSelectedImagesGlobal((prev) =>
-          prev.map((image) => (image === selectedImage ? newImageUri : image))
+          prev.map((image, index) =>
+            index === currentVisibleIndex ? newImageUri : image
+          )
         );
       },
     });
   };
 
-  const handleCancel = () => {
-    console.log("cancel button was pressed");
-    setImagePressModalVisible(false);
-  };
+  // const handleCancel = () => {
+  //   console.log("cancel button was pressed");
+  //   setImagePressModalVisible(false);
+  // };
 
   if (selectedImagesGlobal.length === 0) {
     return (
@@ -118,12 +128,10 @@ export default function PhotoStyling() {
       </View>
     );
   }
+
   //renders the selected images for styling
   const renderItem = ({ item }) => (
-    <Pressable
-      onPress={() => handleImagePress(item)}
-      style={styles.imageContainer}
-    >
+    <View style={styles.imageContainer}>
       <View style={styles.frame}>
         <View style={[styles.main, { borderColor: borderColor }]}>
           <Image
@@ -149,7 +157,7 @@ export default function PhotoStyling() {
       </View>
       {/* <Text style={styles.uriText}>{item}</Text>
       <Text style={styles.imageText}>Styled Image</Text> */}
-    </Pressable>
+    </View>
   );
 
   const handleCheckout = () => {
@@ -186,13 +194,27 @@ export default function PhotoStyling() {
     navigation.navigate("AddressScreen", {
       onDone: (address) => {
         setAddress(address);
-        setModalVisible(true);
+        setModalOrderSuccess(true);
       },
     });
     // console.log(
     //   "This should get the complete address from address screen",
     //   address
     // );
+  };
+
+  const goToOrdersScreen = () => {
+    setModalOrderSuccess(false);
+    navigation.navigate("OrdersScreen");
+
+    //take address and images from here to orders screen
+    //console.log("This is the address", address);
+    //console.log("These are the images", selectedImagesGlobal);
+  };
+
+  const goToHomeScreen = () => {
+    setModalOrderSuccess(false);
+    navigation.navigate("ImageSlider");
   };
 
   const framesCount = selectedImagesGlobal.length;
@@ -277,8 +299,18 @@ export default function PhotoStyling() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
         // contentContainerStyle={styles.flatListContent}
       />
+      <View style={styles.imageEditingStyle}>
+        <Pressable style={styles.removeButtonImagePress} onPress={handleRemove}>
+          <Text style={styles.removeTextImagePressStyle}>Remove</Text>
+        </Pressable>
+        <Pressable style={styles.adjustButtonImagePress} onPress={handleAdjust}>
+          <Text style={styles.adjustTextImagePressStyle}>Adjust</Text>
+        </Pressable>
+      </View>
       <Pressable style={styles.checkoutbuttonStyle} onPress={handleCheckout}>
         <Text style={styles.checkoutbuttonText}>CHECKOUT</Text>
       </Pressable>
@@ -297,9 +329,7 @@ export default function PhotoStyling() {
             >
               <Text style={styles.modalCloseButtonText}>X</Text>
             </Pressable>
-            <Pressable style={styles.addressButton} onPress={goToAddressScreen}>
-              <Text style={styles.addressButtonText}>Enter Address</Text>
-            </Pressable>
+
             <Text style={styles.codText}>Cash on Delivery (COD)</Text>
             <View style={styles.orderDetails}>
               <View style={styles.row}>
@@ -319,13 +349,13 @@ export default function PhotoStyling() {
               </View>
 
               <View style={styles.row}>
-                <Text>Total</Text>
-                <Text>Rs.{totalCost}</Text>
+                <Text style={styles.totalRowText}>Total</Text>
+                <Text style={styles.totalRowText}>Rs.{totalCost}</Text>
               </View>
             </View>
             <Pressable
               style={styles.placeOrderButton}
-              onPress={handlePlaceOrder}
+              onPress={goToAddressScreen}
               // disabled={!isAddressValid}
             >
               <Text style={styles.placeOrderButtonText}>Place Order</Text>
@@ -333,29 +363,38 @@ export default function PhotoStyling() {
           </View>
         </View>
       </Modal>
-      {/* Image Press Modal */}
+      {/* Order Success modal */}
       <Modal
         animationType="slide"
         transparent={true}
-        visible={imagePressModalVisible}
-        onRequestClose={() => setImagePressModalVisible(false)}
+        visible={modalOrderSuccess}
+        onRequestClose={() => setModalOrderSuccess(false)}
       >
         <View style={styles.modalView}>
           <View style={styles.modalContent}>
             <Pressable
               style={styles.modalCloseButton}
-              onPress={() => setImagePressModalVisible(false)}
+              onPress={() => setModalOrderSuccess(false)}
             >
               <Text style={styles.modalCloseButtonText}>X</Text>
             </Pressable>
-            <Pressable style={styles.buttonImagePress} onPress={handleRemove}>
-              <Text style={styles.textImagePressStyle}>Remove</Text>
+
+            <Text style={styles.codText}>Order Placed Successfully!</Text>
+
+            <Pressable
+              style={styles.viewOrderButton}
+              onPress={goToOrdersScreen}
+              // disabled={!isAddressValid}
+            >
+              <Text style={styles.viewOrderButtonText}>View My Orders</Text>
             </Pressable>
-            <Pressable style={styles.buttonImagePress} onPress={handleAdjust}>
-              <Text style={styles.textImagePressStyle}>Adjust</Text>
-            </Pressable>
-            <Pressable style={styles.buttonImagePress} onPress={handleCancel}>
-              <Text style={styles.textImagePressStyle}>Cancel</Text>
+
+            <Pressable
+              style={styles.homeButton}
+              onPress={goToHomeScreen}
+              // disabled={!isAddressValid}
+            >
+              <Text style={styles.homeButtonText}>Go Home</Text>
             </Pressable>
           </View>
         </View>
@@ -378,6 +417,43 @@ const styles = StyleSheet.create({
     margin: 55,
     justifyContent: "center",
     alignItems: "center",
+  },
+  imageEditingStyle: {
+    flexDirection: "row",
+    marginLeft: 98,
+    marginTop: 15,
+  },
+  removeButtonImagePress: {
+    backgroundColor: "#EA9B3F",
+    padding: 10,
+    elevation: 2,
+    marginVertical: 5,
+    width: 100,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 7,
+  },
+  removeTextImagePressStyle: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  adjustButtonImagePress: {
+    backgroundColor: "#EA9B3F",
+    padding: 10,
+    elevation: 2,
+    marginVertical: 5,
+    width: 100,
+    alignItems: "center",
+    marginLeft: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 7,
+  },
+  adjustTextImagePressStyle: {
+    color: "white",
+    fontWeight: "bold",
   },
   // flatListContent: {
   //   flexGrow: 1,
@@ -483,7 +559,7 @@ const styles = StyleSheet.create({
     width: "80%",
     padding: 20,
     backgroundColor: "white",
-    borderRadius: 10,
+    borderRadius: 7,
     alignItems: "center",
   },
   modalCloseButton: {
@@ -493,25 +569,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  buttonImagePress: {
-    backgroundColor: "#EA9B3F",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginVertical: 5,
-    width: 100,
-    alignItems: "center",
-  },
-  textImagePressStyle: {
-    color: "white",
-    fontWeight: "bold",
-  },
+
   addressButton: {
     marginTop: 10,
     marginBottom: 20,
     padding: 10,
     backgroundColor: "#EA9B3F",
-    borderRadius: 5,
+    borderRadius: 7,
   },
   addressButtonText: {
     color: "white",
@@ -531,10 +595,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 3,
   },
+  totalRowText: {
+    fontWeight: "bold",
+  },
   placeOrderButton: {
     padding: 10,
     backgroundColor: "#EA9B3F",
-    borderRadius: 5,
+    borderRadius: 7,
     alignItems: "center",
   },
   placeOrderButtonText: {
@@ -558,7 +625,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 7,
   },
   buttonBoldText: { fontSize: 15, color: "white", fontWeight: "bold" },
   buttonClassicStyle: {
@@ -571,7 +638,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 7,
   },
   buttonClassicText: { fontSize: 15, color: "white", fontWeight: "bold" },
 
@@ -584,7 +651,7 @@ const styles = StyleSheet.create({
     height: 43,
     // paddingHorizontal: 20,
     // paddingVertical: 24,
-    borderRadius: 5,
+    borderRadius: 7,
     borderColor: "#000000",
     borderWidth: 0.5,
   },
@@ -598,7 +665,7 @@ const styles = StyleSheet.create({
     height: 43,
     // paddingHorizontal: 20,
     // paddingVertical: 24,
-    borderRadius: 5,
+    borderRadius: 7,
     borderColor: "#000000",
     borderWidth: 0.5,
   },
@@ -613,20 +680,30 @@ const styles = StyleSheet.create({
     marginLeft: 170,
   },
 
-  checkoutbuttonStyle: {
-    flex: 1,
-    marginTop: 700,
-    marginLeft: 82,
-    backgroundColor: "#EA9B3F",
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 90,
-    paddingVertical: 17,
-    borderRadius: 7,
-  },
-  checkoutbuttonText: { fontSize: 15, color: "white", fontWeight: "bold" },
   activeButtonStyle: {
     backgroundColor: "#E38417",
+  },
+
+  viewOrderButton: {
+    padding: 10,
+    backgroundColor: "#EA9B3F",
+    borderRadius: 7,
+    alignItems: "center",
+    margin: 20,
+  },
+  viewOrderButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  homeButton: {
+    padding: 10,
+    backgroundColor: "#EA9B3F",
+    borderRadius: 7,
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  homeButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
