@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Parallelogram from "../components/parallelogram";
+import axios from "axios";
 // import { ScrollView } from "react-native-gesture-handler";
 
 // import GalleryAccess from "./GalleryAccess";
@@ -41,8 +42,9 @@ export default function PhotoStyling() {
   const [selectedImage, setSelectedImage] = useState(null);
   // for classic and bold functionality
   const [resizeMode, setResizeMode] = useState("cover");
-  // for changing colors of classic and bold colors
+  // for changing of classic and bold
   const [activeStyle, setActiveStyle] = useState("bold");
+  let frameColor = "white";
 
   //const [isAddressValid, setIsAddressValid] = useState(false);
 
@@ -194,6 +196,39 @@ export default function PhotoStyling() {
     navigation.navigate("AddressScreen", {
       onDone: (address) => {
         setAddress(address);
+        const headers = {
+          userid: "668e636cdfb7272abd65a759",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMDYxODUzMiwiZXhwIjoxNzIxMjIzMzMyfQ.UNqs_8KvZB5-5wMP1W-CMQ1f0lZu5N6-3POsyEkHoqE",
+        };
+        const data = {
+          name: address.fullName,
+          email: address.emailAddress,
+          price: totalCost,
+          color: frameColor,
+          country: address.country,
+          pnum: address.phoneNumber,
+          zip: address.zip,
+          addr: address.addressLine,
+          city: address.city,
+          // images: [
+          //   "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2t5fGVufDB8fDB8fHww",
+          //   "https://images.pexels.com/photos/66997/pexels-photo-66997.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          // ],
+          frame: activeStyle,
+          status: "Pending",
+        };
+        axios
+          .post("https://backend.framer.pk/order", data, {
+            headers: headers,
+          })
+          .then(function (response) {
+            console.log("response", response.data);
+          })
+          .catch(function (error) {
+            console.log("error", error.message);
+          });
+        //console.log("we are getting address finally", address);
         setModalOrderSuccess(true);
       },
     });
@@ -223,10 +258,12 @@ export default function PhotoStyling() {
   const totalCost = 1500 + extraFramesCost;
 
   const pressBlack = () => {
-    setBorderColor("#000000");
+    setBorderColor("black");
+    frameColor = "black";
   };
   const pressWhite = () => {
-    setBorderColor("#FFFFFF");
+    setBorderColor("white");
+    frameColor = "white";
   };
   const pressBold = () => {
     setResizeMode("cover");

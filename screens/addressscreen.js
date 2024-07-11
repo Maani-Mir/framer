@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+//import { Picker } from "@react-native-picker/picker";
+import { Dropdown } from "react-native-element-dropdown";
 
 export default function AddressScreen() {
   const route = useRoute();
@@ -22,9 +24,16 @@ export default function AddressScreen() {
     fullName: "",
     addressLine: "",
     city: "",
+    country: "",
     emailAddress: "",
     phoneNumber: "",
+    zip: "",
   });
+
+  const countries = [
+    { label: "Pakistan", value: "Pakistan" },
+    { label: "UAE", value: "UAE" },
+  ];
 
   const handleDone = () => {
     if (Object.values(address).some((val) => val.trim() === "")) {
@@ -77,6 +86,30 @@ export default function AddressScreen() {
           value={address.city}
           onChangeText={(text) => handleChange("city", text)}
         />
+        <View style={styles.dropdownContainer}>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={countries}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder="Country"
+            value={address.country}
+            onChange={(item) => {
+              handleChange("country", item.value);
+            }}
+          />
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Zip Code"
+          value={address.zip}
+          onChangeText={(text) => handleChange("zip", text)}
+        />
         <TextInput
           style={styles.input}
           placeholder="Email Address"
@@ -121,6 +154,36 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     borderRadius: 7,
+  },
+  dropdownContainer: {
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    // paddingHorizontal: 10,
+    borderRadius: 7,
+    justifyContent: "center",
+  },
+  dropdown: {
+    height: 50,
+    paddingHorizontal: 10,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color: "gray",
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    color: "black",
+  },
+  pickerContainer: {
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 7,
+    justifyContent: "center",
   },
   doneButton: {
     backgroundColor: "#EA9B3F",

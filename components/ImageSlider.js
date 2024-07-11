@@ -17,10 +17,24 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import GalleryAccess from "../screens/GalleryAccess";
 // import GalleryAccess from "../screens/GalleryAccess";
 import Paginator from "./paginator";
+import axios from "axios";
+//import LoginPage from "../screens/login";
 
 export default ImageSlider = ({ navigation }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
 
+  // for login communication with backend
+  // axios
+  //   .post("https://backend.framer.pk/login", {
+  //     email: "salman.arif@stax3.com",
+  //     password: "Flintstone",
+  //   })
+  //   .then(function (response) {
+  //     console.log("response", response.data);
+  //   })
+  //   .catch(function (error) {
+  //     console.log("error", error.message);
+  //   });
   // const [loading, setLoading] = useState(true);
 
   // useEffect(() => {
@@ -57,7 +71,7 @@ export default ImageSlider = ({ navigation }) => {
 
       <Pressable
         style={styles.buttonStyle}
-        onPress={() => navigation.navigate(GalleryAccess)}
+        onPress={() => navigation.navigate("LoginPage")}
       >
         <Text style={styles.buttonText}>GET STARTED</Text>
       </Pressable>
