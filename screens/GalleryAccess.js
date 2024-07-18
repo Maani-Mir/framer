@@ -12,11 +12,15 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { TabView, SceneMap } from "react-native-tab-view";
 import PhotoStyling from "./photostyling";
 // import { useNavigation } from "@react-navigation/native";
+
+const initialLayout = { width: Dimensions.get("window").width };
 
 var selectedImagesGlobal = new Array();
 
@@ -72,12 +76,17 @@ export default function GalleryAccess({ navigation }) {
     navigation.navigate("PhotoStyling", { selectedImagesGlobal });
   };
 
+  if (!albums) {
+    return <ActivityIndicator size="large" color="#EA9B3F" />;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.headerSelectedImagesText}>
         Selected Images: {selectedImagesGlobal.length}
       </Text>
-      <ScrollView>
+      <AlbumTabs albums={albums} handleImageSelection={handleImageSelection} />
+      {/* <ScrollView>
         {albums &&
           albums.map((album) => (
             <AlbumEntry
@@ -86,11 +95,40 @@ export default function GalleryAccess({ navigation }) {
               onImageSelect={handleImageSelection}
             />
           ))}
-      </ScrollView>
+      </ScrollView> */}
       <Pressable style={styles.buttonStyle} onPress={handleProceed}>
         <Text style={styles.buttonText}>STYLE YOUR PHOTO</Text>
       </Pressable>
     </SafeAreaView>
+  );
+}
+
+function AlbumTabs({ albums, handleImageSelection }) {
+  const [index, setIndex] = useState(0);
+  const [routes] = useState(
+    albums.map((album) => ({
+      key: album.id,
+      title: album.title,
+    }))
+  );
+
+  const renderScene = SceneMap(
+    albums.reduce((scenes, album) => {
+      scenes[album.id] = () => (
+        <AlbumEntry album={album} onImageSelect={handleImageSelection} />
+      );
+      return scenes;
+    }, {})
+  );
+
+  return (
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={initialLayout}
+      style={{ marginTop: 20 }}
+    />
   );
 }
 
@@ -167,7 +205,7 @@ function AlbumEntry({ album, onImageSelect }) {
           {assets.length === 0 ? (
             <Text style={styles.noResultsText}>0 results</Text>
           ) : (
-            assets &&
+            // assets &&
             assets.map((image) => (
               // console.log(image)
               <TouchableOpacity
