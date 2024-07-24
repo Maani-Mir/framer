@@ -9,7 +9,7 @@ export default function MyOrders() {
   const headers = {
     userid: "668e636cdfb7272abd65a759",
     Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMDYxODUzMiwiZXhwIjoxNzIxMjIzMzMyfQ.UNqs_8KvZB5-5wMP1W-CMQ1f0lZu5N6-3POsyEkHoqE",
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
   };
   axios
     .get("https://backend.framer.pk/order", {
@@ -21,7 +21,7 @@ export default function MyOrders() {
       //console.log("response from orderData", orderData.data);
     })
     .catch(function (error) {
-      console.log("error", error.message);
+      console.log("error from orders", error.message);
     });
 
   return (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import {
   Button,
   Text,
@@ -45,20 +45,26 @@ var selectedImagesGlobal = new Array();
 // }
 
 export default function GalleryAccess({ navigation }) {
-  const [albums, setAlbums] = useState(null);
+  const [albums, setAlbums] = useState([]);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [selectedCount, setSelectedCount] = useState([]);
 
+  // const memoAlbums = memo(() => getAlbums(), [albums]);
+
   useEffect(() => {
     async function getAlbums() {
+      console.log("are we getting in getalbums?");
       if (permissionResponse.status !== "granted") {
         await requestPermission();
       }
       const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
         includeSmartAlbums: true,
       });
+
+      console.log("albums that are fetched", fetchedAlbums);
       setAlbums(fetchedAlbums);
     }
+
     getAlbums();
   }, [permissionResponse]);
 
@@ -85,8 +91,12 @@ export default function GalleryAccess({ navigation }) {
       <Text style={styles.headerSelectedImagesText}>
         Selected Images: {selectedImagesGlobal.length}
       </Text>
-      <AlbumTabs albums={albums} handleImageSelection={handleImageSelection} />
-      {/* <ScrollView>
+      {/* <AlbumTabs
+        // style={{ marginTop: -350 }}
+        albums={memoAlbums}
+        handleImageSelection={handleImageSelection}
+      /> */}
+      <ScrollView>
         {albums &&
           albums.map((album) => (
             <AlbumEntry
@@ -95,7 +105,7 @@ export default function GalleryAccess({ navigation }) {
               onImageSelect={handleImageSelection}
             />
           ))}
-      </ScrollView> */}
+      </ScrollView>
       <Pressable style={styles.buttonStyle} onPress={handleProceed}>
         <Text style={styles.buttonText}>STYLE YOUR PHOTO</Text>
       </Pressable>
@@ -122,13 +132,16 @@ function AlbumTabs({ albums, handleImageSelection }) {
   );
 
   return (
+    // <View style={styles.tabViewContainer}>
     <TabView
+      renderTabBar={() => null}
       navigationState={{ index, routes }}
       renderScene={renderScene}
       onIndexChange={setIndex}
       initialLayout={initialLayout}
-      style={{ marginTop: 20 }}
+      style={styles.tabView}
     />
+    // </View>
   );
 }
 
@@ -136,6 +149,10 @@ function AlbumEntry({ album, onImageSelect }) {
   const [assets, setAssets] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    console.log("Images that should show border color", selectedImages);
+  }, [selectedImages]);
 
   useEffect(() => {
     async function getAlbumAssets() {
@@ -147,6 +164,7 @@ function AlbumEntry({ album, onImageSelect }) {
       setAssets(albumAssets.assets);
       setLoading(false);
     }
+    console.log("album assets");
     getAlbumAssets();
   }, [album]);
 
@@ -241,6 +259,13 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  tabViewContainer: {
+    height: 20,
+  },
+  tabView: {
+    flex: 1,
+    height: 20,
+  },
   headerSelectedImagesText: {
     fontSize: 18,
     fontWeight: "bold",
@@ -274,10 +299,11 @@ const styles = StyleSheet.create({
   buttonStyle: {
     flex: 1,
     marginTop: 679,
+    // marginTop: 10,
     marginLeft: 122,
     backgroundColor: "#EA9B3F",
     position: "absolute",
-
+    alignSelf: "center",
     paddingHorizontal: 20,
     paddingVertical: 18,
     borderRadius: 7,

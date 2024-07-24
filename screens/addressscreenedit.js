@@ -14,21 +14,40 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 //import { Picker } from "@react-native-picker/picker";
 import { Dropdown } from "react-native-element-dropdown";
+import axios from "axios";
 
-export default function AddressScreen() {
+export default function AddressScreenEdit() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { onDone } = route.params;
+  // const { onDone } = route.params;
+  let addressFilter = [];
+  const [address, setAddress] = useState(route.params.address);
+  console.log("address coming from address list behind", address);
+
+  // if (route.params.address) {
+  //   addressFilter = [
+  //     address.name,
+  //     address.addr,
+  //     address.city,
+  //     address.country,
+  //     address.email,
+  //     address.pnum,
+  //     address.zip,
+  //   ];
+
+  //   console.log("Filtered part of address", addressFilter);
+  // }
+
   //const { address: initialAddress, handleAddressChange } = route.params;
-  const [address, setAddress] = useState({
-    fullName: "",
-    addressLine: "",
-    city: "",
-    country: "",
-    emailAddress: "",
-    phoneNumber: "",
-    zip: "",
-  });
+  // const [address, setAddress] = useState({
+  //   fullName: address.name,
+  //   addressLine: address.addr,
+  //   city: address.city,
+  //   country: address.country,
+  //   emailAddress: address.email,
+  //   phoneNumber: address.pnum,
+  //   zip: address.zip,
+  // });
 
   const countries = [
     { label: "Pakistan", value: "Pakistan" },
@@ -36,20 +55,48 @@ export default function AddressScreen() {
   ];
 
   const handleDone = () => {
-    if (Object.values(address).some((val) => val.trim() === "")) {
-      Alert.alert("Error, Please fill in all fields.");
-      return;
-    }
-    onDone(address);
+    console.log("address after pressing done in address screen", address);
+    // console.log("This is the address object values", Object.values(address));
+    const headers = {
+      userid: "668e636cdfb7272abd65a759",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
+    };
+    const data = {
+      addr: address.addr,
+    };
+    axios
+      .put(`https://backend.framer.pk/address/${address._id}`, data, {
+        headers: headers,
+      })
+      .then(function (response) {
+        console.log("response", response.data);
+      })
+      .catch(function (error) {
+        console.log("error from photostyling", error.message);
+      });
+
+    // if (
+    //   Object.values(address).some(
+    //     (val) => typeof val !== "string" || val.trim() === ""
+    //   )
+    // ) {
+    //   Alert.alert("Error, Please fill in all fields.");
+    //   return;
+    // }
+
+    // onDone(address);
+    // route.params.address = address;
     navigation.goBack();
   };
 
   const handleChange = (field, value) => {
     console.log(`Changing ${field} to ${value}`);
+    //console.log("before setAddress", { ...address, [field]: value });
     setAddress((prev) => ({ ...prev, [field]: value }));
   };
 
-  console.log("Rerendering AddressScreen");
+  console.log("Rerendering AddressScreenEdit");
 
   useEffect(() => {
     console.log("State of the address screen", address);
@@ -71,14 +118,14 @@ export default function AddressScreen() {
         <TextInput
           style={styles.input}
           placeholder="Full Name"
-          value={address.fullName}
-          onChangeText={(text) => handleChange("fullName", text)}
+          value={address.name}
+          onChangeText={(text) => handleChange("name", text)}
         />
         <TextInput
           style={styles.input}
           placeholder="Address"
-          value={address.addressLine}
-          onChangeText={(text) => handleChange("addressLine", text)}
+          value={address.addr}
+          onChangeText={(text) => handleChange("addr", text)}
         />
         <TextInput
           style={styles.input}
@@ -113,15 +160,15 @@ export default function AddressScreen() {
         <TextInput
           style={styles.input}
           placeholder="Email Address"
-          value={address.emailAddress}
-          onChangeText={(text) => handleChange("emailAddress", text)}
+          value={address.email}
+          onChangeText={(text) => handleChange("email", text)}
           keyboardType="email-address"
         />
         <TextInput
           style={styles.input}
           placeholder="Phone Number"
-          value={address.phoneNumber}
-          onChangeText={(text) => handleChange("phoneNumber", text)}
+          value={address.pnum}
+          onChangeText={(text) => handleChange("pnum", text)}
           keyboardType="phone-pad"
         />
         <Pressable style={styles.doneButton} onPress={handleDone}>

@@ -15,11 +15,16 @@ import {
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Parallelogram from "../components/parallelogram";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+
 // import { ScrollView } from "react-native-gesture-handler";
 
 // import GalleryAccess from "./GalleryAccess";
 
 export default function PhotoStyling() {
+  // console.log("This is the user id", userId);
+  // console.log("This is the user token", userToken);
+
   const route = useRoute();
   const navigation = useNavigation();
   // state to hold the border color of the styled images
@@ -37,7 +42,7 @@ export default function PhotoStyling() {
   // this state is set when the user presses the styled image for cropping or removing
   const [currentVisibleIndex, setCurrentVisibleIndex] = useState(0);
   // this state is to keep the address of the user
-  const [address, setAddress] = useState(null);
+  const [address, setAddress] = useState([]);
   //state to hold which image we are at in the array of images selected for styling
   const [selectedImage, setSelectedImage] = useState(null);
   // for classic and bold functionality
@@ -166,18 +171,18 @@ export default function PhotoStyling() {
     setModalVisible(true);
   };
 
-  const handlePlaceOrder = () => {
-    console.log("Order button is pressed");
-    if (!address || Object.values(address).some((val) => val.trim() === "")) {
-      Alert.alert("Error, Please fill in all address fields.");
-      return;
-    } else if (address) {
-      //order placement logic here
-      setModalVisible(false);
-      Alert.alert("Order placed sucessfully!");
-      console.log("This is the address", address);
-    }
-  };
+  // const handlePlaceOrder = () => {
+  //   console.log("Order button is pressed");
+  //   if (!address || Object.values(address).some((val) => val.trim() === "")) {
+  //     Alert.alert("Error, Please fill in all address fields.");
+  //     return;
+  //   } else if (address) {
+  //     //order placement logic here
+  //     setModalVisible(false);
+  //     Alert.alert("Order placed sucessfully!");
+  //     console.log("This is the address", address);
+  //   }
+  // };
 
   // const handleAddressChange = (updatedAddress) => {
   //   setAddress(updatedAddress);
@@ -191,25 +196,37 @@ export default function PhotoStyling() {
   //   //console.log("This is the global address variable that is set", address);
   // };
 
-  const goToAddressScreen = () => {
+  const goToAddressList = () => {
     setModalVisible(false);
-    navigation.navigate("AddressScreen", {
+    navigation.navigate("AddressList", {
       onDone: (address) => {
+        // console.log(
+        //   "This is the address we got after clicking the addresslist pressable",
+        //   address
+        // );
+        // console.log(
+        //   "This is the address we got after getting back fromm 2 screens",
+        //   address
+        // );
         setAddress(address);
+        console.log("we are getting address before post order", address);
+        let userId = SecureStore.getItemAsync("userId");
+        let userToken = SecureStore.getItemAsync("userToken");
+
         const headers = {
           userid: "668e636cdfb7272abd65a759",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMDYxODUzMiwiZXhwIjoxNzIxMjIzMzMyfQ.UNqs_8KvZB5-5wMP1W-CMQ1f0lZu5N6-3POsyEkHoqE",
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
         };
         const data = {
-          name: address.fullName,
-          email: address.emailAddress,
+          name: address.name,
+          email: address.email,
           price: totalCost,
           color: frameColor,
           country: address.country,
-          pnum: address.phoneNumber,
+          pnum: address.pnum,
           zip: address.zip,
-          addr: address.addressLine,
+          addr: address.addr,
           city: address.city,
           // images: [
           //   "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2t5fGVufDB8fDB8fHww",
@@ -226,9 +243,12 @@ export default function PhotoStyling() {
             console.log("response", response.data);
           })
           .catch(function (error) {
-            console.log("error", error.message);
+            console.log("error from photostyling", error.message);
           });
-        //console.log("we are getting address finally", address);
+        console.log("we are getting address finally", address);
+        console.log("total cost coming from addresslist", totalCost);
+        console.log("frame color coming from addresslist", frameColor);
+
         setModalOrderSuccess(true);
       },
     });
@@ -258,11 +278,11 @@ export default function PhotoStyling() {
   const totalCost = 1500 + extraFramesCost;
 
   const pressBlack = () => {
-    setBorderColor("black");
+    setBorderColor("#000000");
     frameColor = "black";
   };
   const pressWhite = () => {
-    setBorderColor("white");
+    setBorderColor("#FFFFFF");
     frameColor = "white";
   };
   const pressBold = () => {
@@ -392,7 +412,7 @@ export default function PhotoStyling() {
             </View>
             <Pressable
               style={styles.placeOrderButton}
-              onPress={goToAddressScreen}
+              onPress={goToAddressList}
               // disabled={!isAddressValid}
             >
               <Text style={styles.placeOrderButtonText}>Place Order</Text>
