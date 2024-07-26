@@ -18,6 +18,7 @@ import * as MediaLibrary from "expo-media-library";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { TabView, SceneMap } from "react-native-tab-view";
 import PhotoStyling from "./photostyling";
+import { useRoute } from "@react-navigation/native";
 // import { useNavigation } from "@react-navigation/native";
 
 const initialLayout = { width: Dimensions.get("window").width };
@@ -45,9 +46,12 @@ var selectedImagesGlobal = new Array();
 // }
 
 export default function GalleryAccess({ navigation }) {
+  const route = useRoute();
   const [albums, setAlbums] = useState([]);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [selectedCount, setSelectedCount] = useState([]);
+  // const userId = route.params.userId;
+  // const userToken = route.params.token;
 
   // const memoAlbums = memo(() => getAlbums(), [albums]);
 

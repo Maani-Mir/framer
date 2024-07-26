@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import {
   View,
@@ -20,6 +20,14 @@ import * as SecureStore from "expo-secure-store";
 // import { ScrollView } from "react-native-gesture-handler";
 
 // import GalleryAccess from "./GalleryAccess";
+// const checkIdTokenStatus = async (userId, userToken) => {
+//   try {
+//     userId = SecureStore.getItemAsync("userId");
+//     userToken = SecureStore.getItemAsync("userToken");
+//   } catch (error) {
+//     console.log("Failed to get id and token status", error);
+//   }
+// };
 
 export default function PhotoStyling() {
   // console.log("This is the user id", userId);
@@ -168,7 +176,8 @@ export default function PhotoStyling() {
   );
 
   const handleCheckout = () => {
-    setModalVisible(true);
+    setModalVisible(false);
+    setModalOrderSuccess(true);
   };
 
   // const handlePlaceOrder = () => {
@@ -197,7 +206,7 @@ export default function PhotoStyling() {
   // };
 
   const goToAddressList = () => {
-    setModalVisible(false);
+    // setModalVisible(false);
     navigation.navigate("AddressList", {
       onDone: (address) => {
         // console.log(
@@ -210,13 +219,17 @@ export default function PhotoStyling() {
         // );
         setAddress(address);
         console.log("we are getting address before post order", address);
-        let userId = SecureStore.getItemAsync("userId");
-        let userToken = SecureStore.getItemAsync("userToken");
+
+        // useEffect(() => {
+        //   checkIdTokenStatus(userId, userToken);
+        //   console.log("userID, are we really getting it here?", userId);
+        //   console.log("no way we get userToken too", userToken);
+        // }, []);
 
         const headers = {
           userid: "668e636cdfb7272abd65a759",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
         };
         const data = {
           name: address.name,
@@ -248,8 +261,9 @@ export default function PhotoStyling() {
         console.log("we are getting address finally", address);
         console.log("total cost coming from addresslist", totalCost);
         console.log("frame color coming from addresslist", frameColor);
+        setModalVisible(true);
 
-        setModalOrderSuccess(true);
+        // setModalOrderSuccess(true);
       },
     });
     // console.log(
@@ -268,7 +282,9 @@ export default function PhotoStyling() {
   };
 
   const goToHomeScreen = () => {
+    setSelectedImagesGlobal([]);
     setModalOrderSuccess(false);
+    console.log("selected images are zero?", selectedImagesGlobal);
     navigation.navigate("ImageSlider");
   };
 
@@ -368,10 +384,10 @@ export default function PhotoStyling() {
           <Text style={styles.adjustTextImagePressStyle}>Adjust</Text>
         </Pressable>
       </View>
-      <Pressable style={styles.checkoutbuttonStyle} onPress={handleCheckout}>
-        <Text style={styles.checkoutbuttonText}>CHECKOUT</Text>
+      <Pressable style={styles.checkoutbuttonStyle} onPress={goToAddressList}>
+        <Text style={styles.checkoutbuttonText}>ADD ADDRESS</Text>
       </Pressable>
-      {/* Checkout Model */}
+      {/* Checkout Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -386,8 +402,35 @@ export default function PhotoStyling() {
             >
               <Text style={styles.modalCloseButtonText}>X</Text>
             </Pressable>
+            <Text style={styles.orderModalHeading}>Address</Text>
+            <View style={styles.orderDetails}>
+              <View style={styles.row}>
+                <Text style={styles.codText}>Name: </Text>
+                <Text style={styles.codText}>{address.name}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.codText}>Email: </Text>
+                <Text style={styles.codText}>{address.email}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.codText}>City: </Text>
+                <Text style={styles.codText}>{address.city}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.codText}>Country: </Text>
+                <Text style={styles.codText}>{address.country}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.codText}>Phone #: </Text>
+                <Text style={styles.codText}>{address.pnum}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.codText}>Home Address: </Text>
+                <Text style={styles.codText}>{address.addr}</Text>
+              </View>
+            </View>
 
-            <Text style={styles.codText}>Cash on Delivery (COD)</Text>
+            <Text style={styles.orderModalHeading}>Cash on Delivery (COD)</Text>
             <View style={styles.orderDetails}>
               <View style={styles.row}>
                 <Text>3 frames for Rs.1500</Text>
@@ -412,10 +455,10 @@ export default function PhotoStyling() {
             </View>
             <Pressable
               style={styles.placeOrderButton}
-              onPress={goToAddressList}
+              onPress={handleCheckout}
               // disabled={!isAddressValid}
             >
-              <Text style={styles.placeOrderButtonText}>Place Order</Text>
+              <Text style={styles.placeOrderButtonText}>PLACE ORDER</Text>
             </Pressable>
           </View>
         </View>
@@ -436,7 +479,9 @@ export default function PhotoStyling() {
               <Text style={styles.modalCloseButtonText}>X</Text>
             </Pressable>
 
-            <Text style={styles.codText}>Order Placed Successfully!</Text>
+            <Text style={styles.orderModalHeading}>
+              Order Placed Successfully!
+            </Text>
 
             <Pressable
               style={styles.viewOrderButton}
@@ -592,7 +637,7 @@ const styles = StyleSheet.create({
   checkoutbuttonStyle: {
     flex: 1,
     marginTop: 700,
-    marginLeft: 82,
+    marginLeft: 72,
     backgroundColor: "#EA9B3F",
     position: "absolute",
     alignItems: "center",
@@ -638,7 +683,16 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  orderModalHeading: {
+    marginBottom: 20,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   codText: {
+    flex: 1,
+    flexWrap: "wrap",
+    // justifyContent: "space-between",
+    // flexDirection: "row",
     marginBottom: 20,
     fontSize: 16,
     fontWeight: "bold",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext, useContext } from "react";
 import {
   View,
   Text,
@@ -129,7 +129,8 @@ export default function LoginPage({ navigation }) {
       await SecureStore.setItemAsync("loggedIn", "true");
       Alert.alert("Success, Login details saved!");
       //login logic
-      navigation.navigate("GalleryAccess");
+
+      navigation.navigate("GalleryAccess", { userId }, { userToken });
     } catch (error) {
       console.error("Failed to save user data", error);
       setErrorMessage("Failed to save login details");

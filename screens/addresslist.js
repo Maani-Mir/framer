@@ -1,60 +1,84 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, Text, View, StyleSheet, Alert, Modal } from "react-native";
 import axios from "axios";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useIsFocused,
+} from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
 
 export default function AddressList() {
   const [addressData, setAddressData] = useState([]);
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   // const route = useRoute();
   // const { onDone } = route.params;
 
-  const headers = {
-    userid: "668e636cdfb7272abd65a759",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
+  const getAllAddresses = () => {
+    const headers = {
+      userid: "668e636cdfb7272abd65a759",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+    };
+    axios
+      .get("https://backend.framer.pk/address", {
+        headers: headers,
+      })
+      .then(function (response) {
+        console.log("response for all addresses", response.data);
+        //console.log("do we seriously have no address here?", response);
+
+        if (response === null) {
+          Alert.alert("There are no addresses here!");
+        } else {
+          setAddressData(response.data);
+        }
+        //console.log("response from addressData", addressData.data);
+      })
+      .catch(function (error) {
+        console.log("error from address list", error.message);
+      });
   };
-  axios
-    .get("https://backend.framer.pk/address", {
-      headers: headers,
-    })
-    .then(function (response) {
-      //console.log("response", response.data);
-      if (response === null) {
-        Alert.alert("There are no addresses here!");
-      } else {
-        setAddressData(response.data);
-      }
-      //console.log("response from addressData", addressData.data);
-    })
-    .catch(function (error) {
-      console.log("error from orders", error.message);
-    });
+
+  useEffect(() => {
+    console.log("are we getting here in useeffect?");
+    // if (isFocused) {
+    getAllAddresses();
+    // }
+  }, [isFocused]);
+
+  //console.log("list of address should be here", addressData.data);
 
   return (
-    <View style={styles.container}>
+    <View>
       <FlatList
         data={addressData.data}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => <AddressCard address={item} />}
+        renderItem={({ item }) => (
+          <AddressCard address={item} getAllAddresses={getAllAddresses} />
+        )}
         contentContainerStyle={styles.container}
+        // ListFooterComponent={AddressFooter}
       />
-      <Pressable
-        onPress={() => navigation.navigate("AddressScreenAddNew")}
-        style={styles.addButtonStyle}
-      >
-        <Text style={styles.addButtonText}>Add New Address</Text>
-      </Pressable>
+      <View style={styles.footer}>
+        <Pressable
+          onPress={() => navigation.navigate("AddressScreenAddNew")}
+          style={styles.addButtonStyle}
+        >
+          <Text style={styles.addButtonText}>ADD NEW ADDRESS</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
-const AddressCard = ({ address }) => {
+const AddressCard = ({ address, getAllAddresses }) => {
   const navigation = useNavigation();
   const route = useRoute();
   const { onDone } = route.params;
-  const [confirmModel, setConfirmModel] = useState(false);
+  //const [confirmModel, setConfirmModel] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   // const handleAddressCardModel = () => {
   //   setConfirmModel(true);
@@ -65,6 +89,40 @@ const AddressCard = ({ address }) => {
     navigation.goBack();
   };
 
+  const handleDeleteAddressModal = () => {
+    setDeleteModalVisible(true);
+  };
+  const deleteAddressDenied = () => {
+    console.log("denied");
+    setDeleteModalVisible(false);
+  };
+
+  const deleteAddress = (address) => {
+    // console.log("deleting...", address._id);
+    const headers = {
+      userid: "668e636cdfb7272abd65a759",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+    };
+    axios
+      .delete(`https://backend.framer.pk/address/${address._id}`, {
+        headers: headers,
+      })
+      .then(function (response) {
+        //console.log("response", response.data);
+        getAllAddresses();
+        if (response === null) {
+          Alert.alert("There are no addresses here!");
+        }
+        //console.log("response from addressData", addressData.data);
+      })
+      .catch(function (error) {
+        console.log("error from delete address function", error.message);
+      });
+    setDeleteModalVisible(false);
+  };
+
+  // };
   // console.log("this is the address parameter", order);
 
   return (
@@ -73,86 +131,75 @@ const AddressCard = ({ address }) => {
       style={styles.card}
     >
       <Text style={styles.textOrder}>{address.addr}</Text>
-
-      <View style={styles.editButton}>
-        <Pressable
-          // style={styles.button}
-          onPress={() => navigation.navigate("AddressScreenEdit", { address })}
-        >
-          {/* {console.log(
+      <Text style={styles.textSmallOrder}>{address.city}</Text>
+      <Text style={styles.textSmallOrder}>{address.country}</Text>
+      <Text style={styles.textSmallOrder}>{address.pnum}</Text>
+      <View style={styles.addressEditDeleteRow}>
+        <View style={styles.editButton}>
+          <Pressable
+            // style={styles.button}
+            onPress={() =>
+              navigation.navigate("AddressScreenEdit", { address })
+            }
+          >
+            {/* {console.log(
             "the address content that is present in this card",
             address
           )} */}
-          <Text style={styles.editButtonText}>Edit</Text>
-        </Pressable>
+            <Text style={styles.editButtonText}>EDIT</Text>
+          </Pressable>
+        </View>
+        <View style={styles.deleteButton}>
+          <Pressable
+            // style={styles.button}
+            onPress={() => handleDeleteAddressModal()}
+          >
+            {/* {console.log(
+            "the address content that is present in this card",
+            address
+          )} */}
+            <Text style={styles.deleteButtonText}>DELETE</Text>
+          </Pressable>
+        </View>
       </View>
-      {/* modal for confirmation that the user is proceeding with this address */}
-      {/* <Modal
+      {/* modal for deleting the address */}
+      <Modal
         animationType="slide"
         transparent={true}
-        visible={confirmModel}
-        onRequestClose={() => setConfirmModel(false)}
+        visible={deleteModalVisible}
+        onRequestClose={() => setDeleteModalVisible(false)}
       >
         <View style={styles.modalView}>
           <View style={styles.modalContent}>
             <Pressable
               style={styles.modalCloseButton}
-              onPress={() => setConfirmModel(false)}
+              onPress={() => setDeleteModalVisible(false)}
             >
               <Text style={styles.modalCloseButtonText}>X</Text>
             </Pressable>
 
             <Text style={styles.codText}>
-              Are you sure you want to proceed with this information provided?
+              Are you sure you want to delete this address?
             </Text>
-            <View style={styles.orderDetails}>
-              <View style={styles.row}>
-                <Text>Name: </Text>
-                <Text style={styles.codText}>
-                  {JSON.stringify(address.name)}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text>Email: </Text>
-                <Text style={styles.codText}>
-                  {JSON.stringify(address.email)}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text>City: </Text>
-                <Text style={styles.codText}>
-                  {JSON.stringify(address.city)}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text>Country: </Text>
-                <Text style={styles.codText}>
-                  {JSON.stringify(address.country)}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text>Phone #: </Text>
-                <Text style={styles.codText}>
-                  {JSON.stringify(address.pnum)}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text>Home Address: </Text>
-                <Text style={styles.codText}>
-                  {JSON.stringify(address.addr)}
-                </Text>
-              </View>
+            <View style={styles.row}>
+              <Pressable
+                style={styles.deleteModalButtonYes}
+                onPress={() => deleteAddress(address)}
+                // disabled={!isAddressValid}
+              >
+                <Text style={styles.confirmOrderButtonText}>Yes</Text>
+              </Pressable>
+              <Pressable
+                style={styles.deleteModalButtonNo}
+                onPress={deleteAddressDenied}
+                // disabled={!isAddressValid}
+              >
+                <Text style={styles.confirmOrderButtonText}>No</Text>
+              </Pressable>
             </View>
-            <Pressable
-              style={styles.confirmOrderButton}
-              onPress={handleAddressCardPress(address)}
-              // disabled={!isAddressValid}
-            >
-              <Text style={styles.confirmOrderButtonText}>Confirm Order</Text>
-            </Pressable>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
     </Pressable>
   );
 };
@@ -160,6 +207,7 @@ const AddressCard = ({ address }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    paddingBottom: 89,
   },
   card: {
     backgroundColor: "#fff",
@@ -182,8 +230,20 @@ const styles = StyleSheet.create({
   textOrder: {
     fontSize: 20,
     marginBottom: 5,
-    color: "#EA9B3F",
+    color: "#000000",
     fontWeight: "bold",
+  },
+  textSmallOrder: {
+    fontSize: 16,
+    // marginBottom: 5,
+    color: "#000000",
+    fontWeight: "bold",
+  },
+  addressEditDeleteRow: {
+    flex: 1,
+    flexDirection: "row",
+    marginLeft: 190,
+    marginTop: 15,
   },
   editButton: {
     // marginTop: 10,
@@ -191,7 +251,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#EA9B3F",
     borderRadius: 7,
-    alignSelf: "flex-end",
+
     // borderColor: "black",
   },
   editButtonText: {
@@ -200,20 +260,61 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
+  deleteButton: {
+    // marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#EA9B3F",
+    borderRadius: 7,
+    marginLeft: 15,
+
+    // borderColor: "black",
+  },
+  deleteButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   addButtonStyle: {
     flex: 1,
-    marginTop: 679,
+    // marginTop: 609,
     // marginTop: 10,
-    marginLeft: 122,
+    // marginLeft: 122,
     backgroundColor: "#EA9B3F",
-    position: "absolute",
+    // position: "absolute",
     alignSelf: "center",
     paddingHorizontal: 20,
     paddingVertical: 18,
     borderRadius: 7,
-    zIndex: 10,
+    // zIndex: 10,
   },
   addButtonText: { fontSize: 15, color: "white", fontWeight: "bold" },
+  footer: {
+    // padding: 10,
+    marginTop: 679,
+    // marginTop: 10,
+    marginLeft: 4,
+    position: "absolute",
+    paddingBottom: 38,
+    paddingHorizontal: 120,
+    // paddingRight: 116,
+    paddingTop: 22,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 17,
+    borderColor: "#EA9B3F",
+    // marginBottom: 55,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
   modalView: {
     flex: 1,
     justifyContent: "center",
@@ -236,6 +337,7 @@ const styles = StyleSheet.create({
   },
   codText: {
     marginBottom: 20,
+
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -255,11 +357,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 3,
   },
-  confirmOrderButton: {
-    padding: 10,
+  deleteModalButtonYes: {
+    paddingHorizontal: 25,
+    paddingVertical: 10,
     backgroundColor: "#EA9B3F",
     borderRadius: 7,
     alignItems: "center",
+  },
+  deleteModalButtonNo: {
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    backgroundColor: "#EA9B3F",
+    borderRadius: 7,
+    alignItems: "center",
+    marginLeft: 7,
   },
   confirmOrderButtonText: {
     color: "white",

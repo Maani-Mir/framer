@@ -60,10 +60,16 @@ export default function AddressScreenEdit() {
     const headers = {
       userid: "668e636cdfb7272abd65a759",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
     };
     const data = {
+      name: address.name,
+      email: address.email,
+      country: address.country,
+      pnum: address.pnum,
+      zip: address.zip,
       addr: address.addr,
+      city: address.city,
     };
     axios
       .put(`https://backend.framer.pk/address/${address._id}`, data, {
@@ -172,7 +178,7 @@ export default function AddressScreenEdit() {
           keyboardType="phone-pad"
         />
         <Pressable style={styles.doneButton} onPress={handleDone}>
-          <Text style={styles.doneButtonText}>PLACE ORDER</Text>
+          <Text style={styles.doneButtonText}>SAVE ADDRESS</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

@@ -9,7 +9,7 @@ export default function MyOrders() {
   const headers = {
     userid: "668e636cdfb7272abd65a759",
     Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
   };
   axios
     .get("https://backend.framer.pk/order", {
@@ -18,7 +18,7 @@ export default function MyOrders() {
     .then(function (response) {
       //console.log("response", response.data);
       setOrderData(response.data);
-      //console.log("response from orderData", orderData.data);
+      // console.log("response from orderData", orderData.data);
     })
     .catch(function (error) {
       console.log("error from orders", error.message);
@@ -52,7 +52,7 @@ const OrderCard = ({ order }) => {
           // style={styles.button}
           onPress={() => navigation.navigate("OrderDetails", { order })}
         >
-          <Text style={styles.buttonText}>View Details</Text>
+          <Text style={styles.buttonText}>VIEW DETAILS</Text>
         </Pressable>
       </View>
     </View>

@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
     top: 0,
     right: -10,
     position: "absolute",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 4.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 4.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
   },
   parallelogramLeft: {
     top: 0,

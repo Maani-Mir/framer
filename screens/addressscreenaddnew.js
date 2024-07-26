@@ -59,10 +59,19 @@ export default function AddressScreenAddNew() {
     console.log("address after pressing done in address screen", address);
     // console.log("This is the address object values", Object.values(address));
 
+    if (
+      Object.values(address).some(
+        (val) => typeof val !== "string" || val.trim() === ""
+      )
+    ) {
+      Alert.alert("Error, Please fill in all fields.");
+      return;
+    }
+
     const headers = {
       userid: "668e636cdfb7272abd65a759",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTM5MTU1NywiZXhwIjoxNzIxOTk2MzU3fQ.TCX32d_9Fu6sHuhKbdB9-wle62egJRV1VCdqWasABm0",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
     };
     const data = {
       name: address.name,
@@ -79,22 +88,14 @@ export default function AddressScreenAddNew() {
       })
       .then(function (response) {
         console.log("response", response.data);
+        navigation.goBack();
       })
       .catch(function (error) {
         console.log("error from photostyling", error.message);
       });
 
-    if (
-      Object.values(address).some(
-        (val) => typeof val !== "string" || val.trim() === ""
-      )
-    ) {
-      Alert.alert("Error, Please fill in all fields.");
-      return;
-    }
     // onDone(address);
     // route.params.address = address;
-    navigation.goBack();
   };
 
   const handleChange = (field, value) => {
@@ -179,7 +180,7 @@ export default function AddressScreenAddNew() {
           keyboardType="phone-pad"
         />
         <Pressable style={styles.doneButton} onPress={handleDone}>
-          <Text style={styles.doneButtonText}>PLACE ORDER</Text>
+          <Text style={styles.doneButtonText}>SAVE ADDRESS</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
