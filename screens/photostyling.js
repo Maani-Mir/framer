@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
     // justifyContent: "space-between",
     // flexDirection: "row",
     marginBottom: 20,
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "bold",
   },
   orderDetails: {

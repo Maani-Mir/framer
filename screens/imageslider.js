@@ -19,6 +19,7 @@ import { View, ActivityIndicator } from "react-native";
 import TabViewExp from "./tabview";
 import AddressList from "./addresslist";
 import AddressScreenAddNew from "./addressscreenaddnew";
+import ReduxExp from "../components/ReduxExp";
 
 const Stack = createNativeStackNavigator();
 let loggedIn;
@@ -107,3 +108,45 @@ export default function ImageSliderScreen() {
     </Stack.Navigator>
   );
 }
+
+// export default function ImageSliderScreen() {
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [initialRoute, setInitialRoute] = useState("ReduxExp");
+
+//   useEffect(() => {
+//     checkLoginStatus(setInitialRoute, setIsLoading);
+//   }, []);
+
+//   if (isLoading) {
+//     return (
+//       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+//         <ActivityIndicator size="large" color="#EA9B3F" />
+//       </View>
+//     );
+//   }
+//   return (
+//     <Stack.Navigator
+//       initialRouteName={ReduxExp}
+//       screenOptions={{ headerShown: false }}
+//     >
+//       {/* {loggedIn?} */}
+//       {/* <Stack.Screen name="ImageSlider" component={ImageSlider} />
+//       <Stack.Screen name="LoginPage" component={LoginPage} />
+//       <Stack.Screen name="SignUpPage" component={SignUpPage} />
+//       <Stack.Screen name="GalleryAccess" component={GalleryAccess} />
+//       <Stack.Screen name="PhotoStyling" component={PhotoStyling} />
+//       <Stack.Screen name="AddressScreenEdit" component={AddressScreenEdit} />
+//       <Stack.Screen name="ImageAdjustScreen" component={ImageAdjustScreen} />
+//       <Stack.Screen name="OrdersScreen" component={MyOrders} />
+//       <Stack.Screen name="OrderDetails" component={OrderDetails} />
+//       {/* <Stack.Screen name="TabViewExp" component={TabViewExp} /> */}
+//       {/* <Stack.Screen name="AddressList" component={AddressList} /> */}
+//       {/*
+//       <Stack.Screen
+//         name="AddressScreenAddNew"
+//         component={AddressScreenAddNew}
+//       /> */}
+//       <Stack.Screen name="ReduxExp" component={ReduxExp} />
+//     </Stack.Navigator>
+//   );
+// }
