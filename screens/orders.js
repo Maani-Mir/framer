@@ -43,16 +43,26 @@ const OrderCard = ({ order }) => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.textOrder}>Order #: {order.orderID}</Text>
-      <Text style={styles.text}>Name: {order.name}</Text>
-      <Text style={styles.text}>Phone #: {order.pnum}</Text>
-      <Text style={styles.text}>Images: {order.images}</Text>
+      <Text allowFontScaling={false} style={styles.textOrder}>
+        Order #: {order.orderID}
+      </Text>
+      <Text allowFontScaling={false} style={styles.text}>
+        Name: {order.name}
+      </Text>
+      <Text allowFontScaling={false} style={styles.text}>
+        Phone #: {order.pnum}
+      </Text>
+      <Text allowFontScaling={false} style={styles.text}>
+        Images: {order.images}
+      </Text>
       <View style={styles.button}>
         <Pressable
           // style={styles.button}
           onPress={() => navigation.navigate("OrderDetails", { order })}
         >
-          <Text style={styles.buttonText}>VIEW DETAILS</Text>
+          <Text allowFontScaling={false} style={styles.buttonText}>
+            VIEW DETAILS
+          </Text>
         </Pressable>
       </View>
     </View>

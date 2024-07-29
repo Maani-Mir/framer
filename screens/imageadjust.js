@@ -84,11 +84,15 @@ export default function ImageAdjustScreen({ navigation }) {
       <Image source={{ uri: croppedImageUri }} style={styles.image} />
 
       <Pressable style={styles.cropButton} onPress={cropImage}>
-        <Text style={styles.cropButtonText}>CROP IMAGE HERE</Text>
+        <Text allowFontScaling={false} style={styles.cropButtonText}>
+          CROP IMAGE HERE
+        </Text>
       </Pressable>
       {/* <Button title="Crop Image" onPress={cropImage} /> */}
       <Pressable style={styles.doneButton} onPress={handleDone}>
-        <Text style={styles.doneButtonText}>DONE</Text>
+        <Text allowFontScaling={false} style={styles.doneButtonText}>
+          DONE
+        </Text>
       </Pressable>
       {/* <Button title="Done" onPress={handleDone} /> */}
     </View>

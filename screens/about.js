@@ -13,14 +13,18 @@ export default function AboutUs() {
     }
   });
   return (
-    <Text style={styles.aboutUsDescription}>
+    <Text allowFontScaling={false} style={styles.aboutUsDescription}>
       Capture your favorite memories forever and decorate your house with them
       in a simple and easy way.
-      <Text style={styles.framerLink} onPress={handlePress}>
+      <Text
+        allowFontScaling={false}
+        style={styles.framerLink}
+        onPress={handlePress}
+      >
         {" "}
         Framer.pk
       </Text>
-      <Text>
+      <Text allowFontScaling={false}>
         {" "}
         prints your pictures into high quality frames that you ca put on your
         walls or clean surface. {"\n"} {"\n"}

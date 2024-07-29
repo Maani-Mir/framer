@@ -73,7 +73,9 @@ export default ImageSlider = ({ navigation }) => {
         style={styles.buttonStyle}
         onPress={() => navigation.navigate("LoginPage")}
       >
-        <Text style={styles.buttonText}>GET STARTED</Text>
+        <Text allowFontScaling={false} style={styles.buttonText}>
+          GET STARTED
+        </Text>
       </Pressable>
       <Paginator data={sliderdata} scrollX={scrollX} />
     </View>

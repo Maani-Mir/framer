@@ -9,45 +9,71 @@ export default function OrderDetails() {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Text style={styles.textStatic}>Name:</Text>
-        <Text style={styles.textDynamic}>{order.name}</Text>
+        <Text allowFontScaling={false} style={styles.textStatic}>
+          Name:
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamic}>
+          {order.name}
+        </Text>
       </View>
       <View style={styles.line} />
       <View style={styles.row}>
-        <Text style={styles.textStatic}>Phone #:</Text>
-        <Text style={styles.textDynamic}>{order.pnum}</Text>
+        <Text allowFontScaling={false} style={styles.textStatic}>
+          Phone #:
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamic}>
+          {order.pnum}
+        </Text>
       </View>
       <View style={styles.line} />
 
       <View style={styles.row}>
-        <Text style={styles.textStatic}>Address: </Text>
-        <Text style={styles.textDynamic}>{order.addr}</Text>
+        <Text allowFontScaling={false} style={styles.textStatic}>
+          Address:{" "}
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamic}>
+          {order.addr}
+        </Text>
       </View>
       <View style={styles.line} />
 
       <View style={styles.row}>
-        <Text style={styles.textStatic}>Date:</Text>
-        <Text style={styles.textDynamic}>
+        <Text allowFontScaling={false} style={styles.textStatic}>
+          Date:
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamic}>
           {new Date(order.createdAt).toLocaleString()}
         </Text>
       </View>
       <View style={styles.line} />
 
       <View style={styles.row}>
-        <Text style={styles.textStatic}>Status:</Text>
-        <Text style={styles.textDynamic}>{order.status}</Text>
+        <Text allowFontScaling={false} style={styles.textStatic}>
+          Status:
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamic}>
+          {order.status}
+        </Text>
       </View>
       <View style={styles.line} />
 
       <View style={styles.row}>
-        <Text style={styles.textStatic}>No. Of Images:</Text>
-        <Text style={styles.textDynamic}>{order.images}</Text>
+        <Text allowFontScaling={false} style={styles.textStatic}>
+          No. Of Images:
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamic}>
+          {order.images}
+        </Text>
       </View>
       <View style={styles.line} />
 
       <View style={styles.row}>
-        <Text style={styles.textStaticPrice}>Price:</Text>
-        <Text style={styles.textDynamicPrice}>{order.price}</Text>
+        <Text allowFontScaling={false} style={styles.textStaticPrice}>
+          Price:
+        </Text>
+        <Text allowFontScaling={false} style={styles.textDynamicPrice}>
+          {order.price}
+        </Text>
       </View>
       <View style={styles.line} />
     </View>

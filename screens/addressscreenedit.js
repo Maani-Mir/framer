@@ -15,6 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 //import { Picker } from "@react-native-picker/picker";
 import { Dropdown } from "react-native-element-dropdown";
 import axios from "axios";
+import CustomText from "../components/customtext";
 
 export default function AddressScreenEdit() {
   const route = useRoute();
@@ -108,6 +109,16 @@ export default function AddressScreenEdit() {
     console.log("State of the address screen", address);
   }, [address]);
 
+  const renderItem = (item) => {
+    return (
+      <View>
+        <Text allowFontScaling={false} style={styles.input}>
+          {item.label}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -122,18 +133,21 @@ export default function AddressScreenEdit() {
           />
         </View>
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Full Name"
           value={address.name}
           onChangeText={(text) => handleChange("name", text)}
         />
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Address"
           value={address.addr}
           onChangeText={(text) => handleChange("addr", text)}
         />
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="City"
           value={address.city}
@@ -150,20 +164,36 @@ export default function AddressScreenEdit() {
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="Country"
+            placeholder={
+              <CustomText
+                style={styles.placeholderStyle}
+                children={"Country"}
+              />
+            }
+            // placeholder="Country"
             value={address.country}
             onChange={(item) => {
               handleChange("country", item.value);
+              // setAddress((item) => ({ ...item, [country]: item }));
             }}
+            renderItem={renderItem}
+            renderSelectedItem={(item) => (
+              <CustomText
+                style={styles.selectedTextStyle}
+                children={item.label}
+              />
+            )}
           />
         </View>
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Zip Code"
           value={address.zip}
           onChangeText={(text) => handleChange("zip", text)}
         />
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Email Address"
           value={address.email}
@@ -171,6 +201,7 @@ export default function AddressScreenEdit() {
           keyboardType="email-address"
         />
         <TextInput
+          allowFontScaling={false}
           style={styles.input}
           placeholder="Phone Number"
           value={address.pnum}
@@ -178,7 +209,9 @@ export default function AddressScreenEdit() {
           keyboardType="phone-pad"
         />
         <Pressable style={styles.doneButton} onPress={handleDone}>
-          <Text style={styles.doneButtonText}>SAVE ADDRESS</Text>
+          <Text allowFontScaling={false} style={styles.doneButtonText}>
+            SAVE ADDRESS
+          </Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -228,6 +261,10 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontSize: 16,
     color: "black",
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
   pickerContainer: {
     height: 50,

@@ -62,21 +62,30 @@ export default function SignUpPage({ navigation }) {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+      <Text allowFontScaling={false} style={styles.title}>
+        Sign Up
+      </Text>
+      {errorMessage ? (
+        <Text allowFontScaling={false} style={styles.error}>
+          {errorMessage}
+        </Text>
+      ) : null}
       <TextInput
+        allowFontScaling={false}
         style={styles.input}
         placeholder="First Name"
         value={firstName}
         onChangeText={setFirstName}
       />
       <TextInput
+        allowFontScaling={false}
         style={styles.input}
         placeholder="Last Name"
         value={lastName}
         onChangeText={setLastName}
       />
       <TextInput
+        allowFontScaling={false}
         style={styles.input}
         placeholder="Email"
         value={email}
@@ -85,6 +94,7 @@ export default function SignUpPage({ navigation }) {
         autoCapitalize="none"
       />
       <TextInput
+        allowFontScaling={false}
         style={styles.input}
         placeholder="Password"
         value={password}
@@ -92,7 +102,9 @@ export default function SignUpPage({ navigation }) {
         secureTextEntry
       />
       <Pressable style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+        <Text allowFontScaling={false} style={styles.buttonText}>
+          Sign Up
+        </Text>
       </Pressable>
     </View>
   );

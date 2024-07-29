@@ -161,9 +161,16 @@ export default function LoginPage({ navigation }) {
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+      <Text allowFontScaling={false} style={styles.title}>
+        Login
+      </Text>
+      {errorMessage ? (
+        <Text allowFontScaling={false} style={styles.error}>
+          {errorMessage}
+        </Text>
+      ) : null}
       <TextInput
+        allowFontScaling={false}
         style={styles.input}
         placeholder="Email"
         value={email}
@@ -172,6 +179,7 @@ export default function LoginPage({ navigation }) {
         autoCapitalize="none"
       />
       <TextInput
+        allowFontScaling={false}
         style={styles.input}
         placeholder="Password"
         value={password}
@@ -179,16 +187,20 @@ export default function LoginPage({ navigation }) {
         secureTextEntry
       />
       <Pressable style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text allowFontScaling={false} style={styles.buttonText}>
+          Login
+        </Text>
       </Pressable>
       <View style={styles.textSign}>
-        <Text>Don't have an account?</Text>
+        <Text allowFontScaling={false}>Don't have an account?</Text>
       </View>
       <Pressable
         style={styles.signupButton}
         onPress={() => navigation.navigate("SignUpPage")}
       >
-        <Text style={styles.buttonText}>Sign up</Text>
+        <Text allowFontScaling={false} style={styles.buttonText}>
+          Sign up
+        </Text>
       </Pressable>
     </View>
   );

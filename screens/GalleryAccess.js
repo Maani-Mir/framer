@@ -92,7 +92,7 @@ export default function GalleryAccess({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerSelectedImagesText}>
+      <Text allowFontScaling={false} style={styles.headerSelectedImagesText}>
         Selected Images: {selectedImagesGlobal.length}
       </Text>
       {/* <AlbumTabs
@@ -111,7 +111,9 @@ export default function GalleryAccess({ navigation }) {
           ))}
       </ScrollView>
       <Pressable style={styles.buttonStyle} onPress={handleProceed}>
-        <Text style={styles.buttonText}>STYLE YOUR PHOTO</Text>
+        <Text allowFontScaling={false} style={styles.buttonText}>
+          STYLE YOUR PHOTO
+        </Text>
       </Pressable>
     </SafeAreaView>
   );
@@ -219,13 +221,17 @@ function AlbumEntry({ album, onImageSelect }) {
 
   return (
     <View key={album.id} style={styles.albumContainer}>
-      <Text style={styles.albumNameStyle}>{album.title}</Text>
+      <Text allowFontScaling={false} style={styles.albumNameStyle}>
+        {album.title}
+      </Text>
       {loading ? (
         <ActivityIndicator size="small" color="#EA9B3F" />
       ) : (
         <View style={styles.albumAssetsContainer}>
           {assets.length === 0 ? (
-            <Text style={styles.noResultsText}>0 results</Text>
+            <Text allowFontScaling={false} style={styles.noResultsText}>
+              0 results
+            </Text>
           ) : (
             // assets &&
             assets.map((image) => (

@@ -139,7 +139,9 @@ export default function PhotoStyling() {
   if (selectedImagesGlobal.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No images selected</Text>
+        <Text allowFontScaling={false} style={styles.emptyText}>
+          No images selected
+        </Text>
       </View>
     );
   }
@@ -170,8 +172,8 @@ export default function PhotoStyling() {
         ></Parallelogram>
         {/* <View style={styles.after}></View> */}
       </View>
-      {/* <Text style={styles.uriText}>{item}</Text>
-      <Text style={styles.imageText}>Styled Image</Text> */}
+      {/* <Text allowFontScaling={false} style={styles.uriText}>{item}</Text>
+      <Text allowFontScaling={false} style={styles.imageText}>Styled Image</Text> */}
     </View>
   );
 
@@ -332,7 +334,9 @@ export default function PhotoStyling() {
           ]}
           onPress={pressBold}
         >
-          <Text style={styles.buttonBoldText}>BOLD</Text>
+          <Text allowFontScaling={false} style={styles.buttonBoldText}>
+            BOLD
+          </Text>
         </Pressable>
         <Pressable
           style={[
@@ -341,7 +345,9 @@ export default function PhotoStyling() {
           ]}
           onPress={pressClassic}
         >
-          <Text style={styles.buttonClassicText}>CLASSIC</Text>
+          <Text allowFontScaling={false} style={styles.buttonClassicText}>
+            CLASSIC
+          </Text>
         </Pressable>
       </View>
       <View style={styles.weightButtonStyle}>
@@ -357,11 +363,11 @@ export default function PhotoStyling() {
       </View>
       <View style={styles.weightStyle}>
         <View style={styles.textBlack}>
-          <Text>Black</Text>
+          <Text allowFontScaling={false}>Black</Text>
         </View>
 
         <View style={styles.textWhite}>
-          <Text>White</Text>
+          <Text allowFontScaling={false}>White</Text>
         </View>
       </View>
 
@@ -378,14 +384,26 @@ export default function PhotoStyling() {
       />
       <View style={styles.imageEditingStyle}>
         <Pressable style={styles.removeButtonImagePress} onPress={handleRemove}>
-          <Text style={styles.removeTextImagePressStyle}>Remove</Text>
+          <Text
+            allowFontScaling={false}
+            style={styles.removeTextImagePressStyle}
+          >
+            Remove
+          </Text>
         </Pressable>
         <Pressable style={styles.adjustButtonImagePress} onPress={handleAdjust}>
-          <Text style={styles.adjustTextImagePressStyle}>Adjust</Text>
+          <Text
+            allowFontScaling={false}
+            style={styles.adjustTextImagePressStyle}
+          >
+            Adjust
+          </Text>
         </Pressable>
       </View>
       <Pressable style={styles.checkoutbuttonStyle} onPress={goToAddressList}>
-        <Text style={styles.checkoutbuttonText}>ADD ADDRESS</Text>
+        <Text allowFontScaling={false} style={styles.checkoutbuttonText}>
+          ADD ADDRESS
+        </Text>
       </Pressable>
       {/* Checkout Modal */}
       <Modal
@@ -400,57 +418,96 @@ export default function PhotoStyling() {
               style={styles.modalCloseButton}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.modalCloseButtonText}>X</Text>
+              <Text
+                allowFontScaling={false}
+                style={styles.modalCloseButtonText}
+              >
+                X
+              </Text>
             </Pressable>
-            <Text style={styles.orderModalHeading}>Address</Text>
+            <Text allowFontScaling={false} style={styles.orderModalHeading}>
+              Address
+            </Text>
             <View style={styles.orderDetails}>
               <View style={styles.row}>
-                <Text style={styles.codText}>Name: </Text>
-                <Text style={styles.codText}>{address.name}</Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  Name:{" "}
+                </Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  {address.name}
+                </Text>
               </View>
               <View style={styles.row}>
-                <Text style={styles.codText}>Email: </Text>
-                <Text style={styles.codText}>{address.email}</Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  Email:{" "}
+                </Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  {address.email}
+                </Text>
               </View>
               <View style={styles.row}>
-                <Text style={styles.codText}>City: </Text>
-                <Text style={styles.codText}>{address.city}</Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  City:{" "}
+                </Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  {address.city}
+                </Text>
               </View>
               <View style={styles.row}>
-                <Text style={styles.codText}>Country: </Text>
-                <Text style={styles.codText}>{address.country}</Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  Country:{" "}
+                </Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  {address.country}
+                </Text>
               </View>
               <View style={styles.row}>
-                <Text style={styles.codText}>Phone #: </Text>
-                <Text style={styles.codText}>{address.pnum}</Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  Phone #:{" "}
+                </Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  {address.pnum}
+                </Text>
               </View>
               <View style={styles.row}>
-                <Text style={styles.codText}>Home Address: </Text>
-                <Text style={styles.codText}>{address.addr}</Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  Home Address:{" "}
+                </Text>
+                <Text allowFontScaling={false} style={styles.codText}>
+                  {address.addr}
+                </Text>
               </View>
             </View>
 
-            <Text style={styles.orderModalHeading}>Cash on Delivery (COD)</Text>
+            <Text allowFontScaling={false} style={styles.orderModalHeading}>
+              Cash on Delivery (COD)
+            </Text>
             <View style={styles.orderDetails}>
               <View style={styles.row}>
-                <Text>3 frames for Rs.1500</Text>
-                <Text>Rs.1500</Text>
+                <Text allowFontScaling={false}>3 frames for Rs.1500</Text>
+                <Text allowFontScaling={false}>Rs.1500</Text>
               </View>
 
               {extraFramesCount > 0 && (
                 <View style={styles.row}>
-                  <Text>{extraFramesCount} more frames, 500 each</Text>
-                  <Text>Rs.{extraFramesCost}</Text>
+                  <Text allowFontScaling={false}>
+                    {extraFramesCount} more frames, 500 each
+                  </Text>
+                  <Text allowFontScaling={false}>Rs.{extraFramesCost}</Text>
                 </View>
               )}
               <View style={styles.row}>
-                <Text>Delivered within 1 week</Text>
-                <Text>FREE</Text>
+                <Text allowFontScaling={false}>Delivered within 1 week</Text>
+                <Text allowFontScaling={false}>FREE</Text>
               </View>
 
               <View style={styles.row}>
-                <Text style={styles.totalRowText}>Total</Text>
-                <Text style={styles.totalRowText}>Rs.{totalCost}</Text>
+                <Text allowFontScaling={false} style={styles.totalRowText}>
+                  Total
+                </Text>
+                <Text allowFontScaling={false} style={styles.totalRowText}>
+                  Rs.{totalCost}
+                </Text>
               </View>
             </View>
             <Pressable
@@ -458,7 +515,12 @@ export default function PhotoStyling() {
               onPress={handleCheckout}
               // disabled={!isAddressValid}
             >
-              <Text style={styles.placeOrderButtonText}>PLACE ORDER</Text>
+              <Text
+                allowFontScaling={false}
+                style={styles.placeOrderButtonText}
+              >
+                PLACE ORDER
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -476,10 +538,15 @@ export default function PhotoStyling() {
               style={styles.modalCloseButton}
               onPress={() => setModalOrderSuccess(false)}
             >
-              <Text style={styles.modalCloseButtonText}>X</Text>
+              <Text
+                allowFontScaling={false}
+                style={styles.modalCloseButtonText}
+              >
+                X
+              </Text>
             </Pressable>
 
-            <Text style={styles.orderModalHeading}>
+            <Text allowFontScaling={false} style={styles.orderModalHeading}>
               Order Placed Successfully!
             </Text>
 
@@ -488,7 +555,9 @@ export default function PhotoStyling() {
               onPress={goToOrdersScreen}
               // disabled={!isAddressValid}
             >
-              <Text style={styles.viewOrderButtonText}>View My Orders</Text>
+              <Text allowFontScaling={false} style={styles.viewOrderButtonText}>
+                View My Orders
+              </Text>
             </Pressable>
 
             <Pressable
@@ -496,13 +565,15 @@ export default function PhotoStyling() {
               onPress={goToHomeScreen}
               // disabled={!isAddressValid}
             >
-              <Text style={styles.homeButtonText}>Go Home</Text>
+              <Text allowFontScaling={false} style={styles.homeButtonText}>
+                Go Home
+              </Text>
             </Pressable>
           </View>
         </View>
       </Modal>
     </View>
-    // <Text>This is the part where we style our photos</Text>
+    // <Text allowFontScaling={false}>This is the part where we style our photos</Text>
     // <TestComponent />
   );
 }
@@ -516,7 +587,13 @@ const styles = StyleSheet.create({
   // },
   imageContainer: {
     marginTop: 100,
-    margin: 55,
+    // margin: 55,
+    marginLeft: 52,
+    marginBottom: 48,
+    marginRight: 60,
+    // marginTop: 50,
+    marginTop: 80,
+
     justifyContent: "center",
     alignItems: "center",
   },
@@ -590,7 +667,7 @@ const styles = StyleSheet.create({
     height: 300,
     // resizeMode: "cover",
     borderWidth: 10,
-    position: "relative",
+    position: "absolute",
     // borderColor: "grey",
     // resizeMode: "cover",
   },

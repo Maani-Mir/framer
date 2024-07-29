@@ -66,7 +66,9 @@ export default function AddressList() {
           onPress={() => navigation.navigate("AddressScreenAddNew")}
           style={styles.addButtonStyle}
         >
-          <Text style={styles.addButtonText}>ADD NEW ADDRESS</Text>
+          <Text allowFontScaling={false} style={styles.addButtonText}>
+            ADD NEW ADDRESS
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -130,10 +132,18 @@ const AddressCard = ({ address, getAllAddresses }) => {
       onPress={() => handleAddressCardPress(address)}
       style={styles.card}
     >
-      <Text style={styles.textOrder}>{address.addr}</Text>
-      <Text style={styles.textSmallOrder}>{address.city}</Text>
-      <Text style={styles.textSmallOrder}>{address.country}</Text>
-      <Text style={styles.textSmallOrder}>{address.pnum}</Text>
+      <Text allowFontScaling={false} style={styles.textOrder}>
+        {address.addr}
+      </Text>
+      <Text allowFontScaling={false} style={styles.textSmallOrder}>
+        {address.city}
+      </Text>
+      <Text allowFontScaling={false} style={styles.textSmallOrder}>
+        {address.country}
+      </Text>
+      <Text allowFontScaling={false} style={styles.textSmallOrder}>
+        {address.pnum}
+      </Text>
       <View style={styles.addressEditDeleteRow}>
         <View style={styles.editButton}>
           <Pressable
@@ -146,7 +156,9 @@ const AddressCard = ({ address, getAllAddresses }) => {
             "the address content that is present in this card",
             address
           )} */}
-            <Text style={styles.editButtonText}>EDIT</Text>
+            <Text allowFontScaling={false} style={styles.editButtonText}>
+              EDIT
+            </Text>
           </Pressable>
         </View>
         <View style={styles.deleteButton}>
@@ -158,7 +170,9 @@ const AddressCard = ({ address, getAllAddresses }) => {
             "the address content that is present in this card",
             address
           )} */}
-            <Text style={styles.deleteButtonText}>DELETE</Text>
+            <Text allowFontScaling={false} style={styles.deleteButtonText}>
+              DELETE
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -175,10 +189,15 @@ const AddressCard = ({ address, getAllAddresses }) => {
               style={styles.modalCloseButton}
               onPress={() => setDeleteModalVisible(false)}
             >
-              <Text style={styles.modalCloseButtonText}>X</Text>
+              <Text
+                allowFontScaling={false}
+                style={styles.modalCloseButtonText}
+              >
+                X
+              </Text>
             </Pressable>
 
-            <Text style={styles.codText}>
+            <Text allowFontScaling={false} style={styles.codText}>
               Are you sure you want to delete this address?
             </Text>
             <View style={styles.row}>
@@ -187,14 +206,24 @@ const AddressCard = ({ address, getAllAddresses }) => {
                 onPress={() => deleteAddress(address)}
                 // disabled={!isAddressValid}
               >
-                <Text style={styles.confirmOrderButtonText}>Yes</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.confirmOrderButtonText}
+                >
+                  Yes
+                </Text>
               </Pressable>
               <Pressable
                 style={styles.deleteModalButtonNo}
                 onPress={deleteAddressDenied}
                 // disabled={!isAddressValid}
               >
-                <Text style={styles.confirmOrderButtonText}>No</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.confirmOrderButtonText}
+                >
+                  No
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -266,7 +295,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#EA9B3F",
     borderRadius: 7,
-    marginLeft: 15,
+    marginLeft: 10,
 
     // borderColor: "black",
   },
@@ -281,24 +310,32 @@ const styles = StyleSheet.create({
     // marginTop: 10,
     // marginLeft: 122,
     backgroundColor: "#EA9B3F",
-    // position: "absolute",
+    position: "absolute",
     alignSelf: "center",
     paddingHorizontal: 20,
     paddingVertical: 18,
     borderRadius: 7,
     // zIndex: 10,
   },
-  addButtonText: { fontSize: 15, color: "white", fontWeight: "bold" },
+  addButtonText: {
+    // flex: 1,
+    fontSize: 15,
+    color: "white",
+    fontWeight: "bold",
+    flexWrap: "nowrap",
+  },
   footer: {
+    flex: 1,
     // padding: 10,
     marginTop: 679,
     // marginTop: 10,
     marginLeft: 4,
     position: "absolute",
-    paddingBottom: 38,
-    paddingHorizontal: 120,
+    paddingBottom: 88,
+    paddingHorizontal: 200,
     // paddingRight: 116,
-    paddingTop: 22,
+    paddingTop: 17,
+    // paddingBottom: 1,
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",

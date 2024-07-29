@@ -11,13 +11,21 @@ export default function ContactUs() {
         />
       </View>
       <View style={styles.textPad}>
-        <Text style={styles.textYellow}>
+        <Text allowFontScaling={false} style={styles.textYellow}>
           Email:
-          <Text style={styles.textBlack}>{"\n"}info@framer.pk</Text>
-          <Text style={styles.textYellow}>{"\n"}Phone: </Text>
-          <Text style={styles.textBlack}>{"\n"}0300-8441864</Text>
-          <Text style={styles.textYellow}>{"\n"}Address: </Text>
-          <Text style={styles.textBlack}>
+          <Text allowFontScaling={false} style={styles.textBlack}>
+            {"\n"}info@framer.pk
+          </Text>
+          <Text allowFontScaling={false} style={styles.textYellow}>
+            {"\n"}Phone:{" "}
+          </Text>
+          <Text allowFontScaling={false} style={styles.textBlack}>
+            {"\n"}0300-8441864
+          </Text>
+          <Text allowFontScaling={false} style={styles.textYellow}>
+            {"\n"}Address:{" "}
+          </Text>
+          <Text allowFontScaling={false} style={styles.textBlack}>
             {"\n"}Suite No. 403-D, 4th Floor City Towers Main Boulevard Road,
             Gulberg II, Lahore, Pakistan
           </Text>
@@ -27,7 +35,7 @@ export default function ContactUs() {
 
     /*
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Contact Us Screen</Text>
+      <Text allowFontScaling={false}>Contact Us Screen</Text>
     </View>
     */
   );
