@@ -142,7 +142,7 @@ const AddressCard = ({ address, getAllAddresses }) => {
         {address.country}
       </Text>
       <Text allowFontScaling={false} style={styles.textSmallOrder}>
-        {address.pnum}
+        {address.notes}
       </Text>
       <View style={styles.addressEditDeleteRow}>
         <View style={styles.editButton}>

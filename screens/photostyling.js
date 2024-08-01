@@ -16,6 +16,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import Parallelogram from "../components/parallelogram";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import * as FileSystem from "expo-file-system";
 
 // import { ScrollView } from "react-native-gesture-handler";
 
@@ -43,6 +44,10 @@ export default function PhotoStyling() {
     route.params.selectedImagesGlobal || []
   );
 
+  // console.log(
+  //   "We are at photostyling and selected images are: ",
+  //   selectedImagesGlobal
+  // );
   // this state is set when the user presses checkout that gives order details
   const [modalVisible, setModalVisible] = useState(false);
   //order placed successfull modal
@@ -179,6 +184,79 @@ export default function PhotoStyling() {
 
   const handleCheckout = () => {
     setModalVisible(false);
+
+    //--------just wanna see if we revert back to OG position, will it still work?
+
+    // const formData = new FormData();
+
+    // formData.append("name", address.name);
+    // formData.append("email", address.email);
+    // formData.append("price", totalCost);
+    // formData.append("color", frameColor);
+    // formData.append("country", address.country);
+    // formData.append("pnum", address.pnum);
+    // formData.append("zip", address.zip);
+    // formData.append("addr", address.addr);
+    // formData.append("city", address.city);
+    // formData.append("frame", activeStyle);
+    // formData.append("status", "Pending");
+
+    // // Add images
+    // for (let i = 0; i < selectedImagesGlobal.length; i++) {
+    //   const uri = selectedImagesGlobal[i];
+    //   console.log("This is the uri for images", uri);
+    //   const blob = await uriToBlob(uri);
+    //   // this has the filename of the image taken through URI
+    //   const filename = selectedImagesGlobal[i].split("/").pop();
+    //   // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
+    //   //const match = /\.(\w+)$/.exec(filename);
+    //   // assigning image/jpg, if match is jpg
+    //   //const type = match ? `image/${match[1]}` : `image`;
+    //   formData.append("images", {
+    //     uri,
+    //     name: filename,
+    //     type: blob.type,
+    //   });
+    // }
+
+    // //console.log("This is the data from formData", data);
+
+    // //sending form data to server
+    // try {
+    //   const response = await fetch("https://backend.framer.pk/order", {
+    //     method: "POST",
+    //     body: formData,
+    //     headers: {
+    //       "content-type": "multipart/form-data",
+    //       userid: "668e636cdfb7272abd65a759",
+    //       Authorization:
+    //         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+    //     },
+    //   });
+
+    //   console.log(
+    //     "response from post order (response.text)",
+    //     await response.text()
+    //   );
+    //   setModalOrderSuccess(true);
+
+    //   // console.log(
+    //   //   "response from post order (response.body)",
+    //   //   response.body
+    //   // );
+
+    //   // console.log(
+    //   //   "response from post order (response.json)",
+    //   //   await response.json()
+    //   // );
+
+    //   // console.log("are our images that b")
+    //   //const result = await response.json();
+    //   //console.log("response in json format", result);
+    // } catch (err) {
+    //   console.log("Error from post order", err);
+    //   Alert.alert("Order not confirmed, please try again");
+    // }
     setModalOrderSuccess(true);
   };
 
@@ -206,11 +284,17 @@ export default function PhotoStyling() {
   //   //address = updatedAddress;
   //   //console.log("This is the global address variable that is set", address);
   // };
+  //function to convert URI to blob
+  const uriToBlob = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return blob;
+  };
 
   const goToAddressList = () => {
     // setModalVisible(false);
     navigation.navigate("AddressList", {
-      onDone: (address) => {
+      onDone: async (address) => {
         // console.log(
         //   "This is the address we got after clicking the addresslist pressable",
         //   address
@@ -222,50 +306,145 @@ export default function PhotoStyling() {
         setAddress(address);
         console.log("we are getting address before post order", address);
 
+        //to show final order information
+        setModalVisible(true);
+
         // useEffect(() => {
         //   checkIdTokenStatus(userId, userToken);
         //   console.log("userID, are we really getting it here?", userId);
         //   console.log("no way we get userToken too", userToken);
         // }, []);
 
-        const headers = {
-          userid: "668e636cdfb7272abd65a759",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
-        };
-        const data = {
-          name: address.name,
-          email: address.email,
-          price: totalCost,
-          color: frameColor,
-          country: address.country,
-          pnum: address.pnum,
-          zip: address.zip,
-          addr: address.addr,
-          city: address.city,
-          // images: [
-          //   "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2t5fGVufDB8fDB8fHww",
-          //   "https://images.pexels.com/photos/66997/pexels-photo-66997.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-          // ],
-          frame: activeStyle,
-          status: "Pending",
-        };
-        axios
-          .post("https://backend.framer.pk/order", data, {
-            headers: headers,
-          })
-          .then(function (response) {
-            console.log("response", response.data);
-          })
-          .catch(function (error) {
-            console.log("error from photostyling", error.message);
-          });
-        console.log("we are getting address finally", address);
-        console.log("total cost coming from addresslist", totalCost);
-        console.log("frame color coming from addresslist", frameColor);
-        setModalVisible(true);
+        //------------------------------post order starts here-------------
 
-        // setModalOrderSuccess(true);
+        // const filename = selectedImagesGlobal[1].split("/").pop();
+        // // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
+        // const match = /\.(\w+)$/.exec(filename);
+        // // assigning image/jpg, if match is jpg
+        // const type = match ? `image/${match[1]}` : `image`;
+
+        // const headers = {
+        //   userid: "668e636cdfb7272abd65a759",
+        //   Authorization:
+        //     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+        // };
+
+        // const data = {
+        //   name: address.name,
+        //   email: address.email,
+        //   price: totalCost,
+        //   color: frameColor,
+        //   country: address.country,
+        //   pnum: address.pnum,
+        //   zip: address.zip,
+        //   addr: address.addr,
+        //   city: address.city,
+        //   // images: [
+        //   //   "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2t5fGVufDB8fDB8fHww",
+        //   //   "https://images.pexels.com/photos/66997/pexels-photo-66997.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        //   // ],
+        //   frame: activeStyle,
+        //   status: "Pending",
+        // };
+
+        //-------lets try this on handleCheckout and see if it works
+
+        const formData = new FormData();
+
+        formData.append("name", address.name);
+        formData.append("email", address.email);
+        formData.append("price", totalCost);
+        formData.append("color", frameColor);
+        formData.append("country", address.country);
+        formData.append("pnum", address.pnum);
+        formData.append("zip", address.zip);
+        formData.append("addr", address.addr);
+        formData.append("city", address.city);
+        formData.append("frame", activeStyle);
+        formData.append("status", "Pending");
+
+        // Add images
+        for (let i = 0; i < selectedImagesGlobal.length; i++) {
+          const uri = selectedImagesGlobal[i];
+          console.log("This is the uri for images", uri);
+          const blob = await uriToBlob(uri);
+          // this has the filename of the image taken through URI
+          const filename = selectedImagesGlobal[i].split("/").pop();
+          // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
+          //const match = /\.(\w+)$/.exec(filename);
+          // assigning image/jpg, if match is jpg
+          //const type = match ? `image/${match[1]}` : `image`;
+          formData.append("images", {
+            uri,
+            name: filename,
+            type: blob.type,
+          });
+        }
+
+        //console.log("This is the data from formData", data);
+
+        //sending form data to server
+        try {
+          const response = await fetch("https://backend.framer.pk/order", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "content-type": "multipart/form-data",
+              userid: "668e636cdfb7272abd65a759",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+            },
+          });
+
+          console.log(
+            "response from post order (response.text)",
+            await response.text()
+          );
+          setModalOrderSuccess(true);
+
+          // console.log(
+          //   "response from post order (response.body)",
+          //   response.body
+          // );
+
+          // console.log(
+          //   "response from post order (response.json)",
+          //   await response.json()
+          // );
+
+          // console.log("are our images that b")
+          //const result = await response.json();
+          //console.log("response in json format", result);
+        } catch (err) {
+          console.log("Error from post order", err);
+          Alert.alert("Order not confirmed, please try again");
+        }
+
+        // axios
+        //   .post("https://backend.framer.pk/order", data, {
+        //     headers: headers,
+        //   })
+        //   .then(function (response) {
+        //     console.log(
+        //       "response: order has been placed, whole order info: ",
+        //       response.data
+        //     );
+        //     setModalVisible(true);
+        //   })
+        //   .catch(function (error) {
+        //     console.log("error from photostyling", error.message);
+        //     console.log("What is this filename bruh", filename);
+        //     console.log("What even is this match brooo", match);
+        //     console.log(
+        //       "ok we got type which seems similar to match i think ",
+        //       type
+        //     );
+
+        //     Alert.alert("Error, order not confirmed");
+        //   });
+        // console.log("we are getting address finally", address);
+        // console.log("total cost coming from addresslist", totalCost);
+        // console.log("frame color coming from addresslist", frameColor);
       },
     });
     // console.log(

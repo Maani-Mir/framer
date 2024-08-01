@@ -62,7 +62,7 @@ export default function OrderDetails() {
           No. Of Images:
         </Text>
         <Text allowFontScaling={false} style={styles.textDynamic}>
-          {order.images}
+          {order.images.length}
         </Text>
       </View>
       <View style={styles.line} />

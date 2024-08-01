@@ -53,7 +53,7 @@ const OrderCard = ({ order }) => {
         Phone #: {order.pnum}
       </Text>
       <Text allowFontScaling={false} style={styles.text}>
-        Images: {order.images}
+        Images: {order.images.length}
       </Text>
       <View style={styles.button}>
         <Pressable

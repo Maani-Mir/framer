@@ -82,6 +82,7 @@ export default function AddressScreenAddNew() {
       zip: address.zip,
       addr: address.addr,
       city: address.city,
+      notes: address.notes,
     };
     axios
       .post("https://backend.framer.pk/address", data, {
@@ -209,6 +210,14 @@ export default function AddressScreenAddNew() {
           onChangeText={(text) => handleChange("pnum", text)}
           keyboardType="phone-pad"
         />
+        <TextInput
+          allowFontScaling={false}
+          style={styles.input}
+          placeholder="Notes"
+          value={address.notes}
+          onChangeText={(text) => handleChange("notes", text)}
+        />
+
         <Pressable style={styles.doneButton} onPress={handleDone}>
           <Text allowFontScaling={false} style={styles.doneButtonText}>
             SAVE ADDRESS
@@ -227,10 +236,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#EA9B3F",
   },
   addressImage: {
-    height: 240,
-    width: 240,
+    height: 200,
+    width: 200,
     marginBottom: 10,
-    marginLeft: 80,
+    marginLeft: 110,
     justifyContent: "center",
     alignItems: "center",
   },
