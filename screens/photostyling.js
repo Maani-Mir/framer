@@ -182,82 +182,82 @@ export default function PhotoStyling() {
     </View>
   );
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     setModalVisible(false);
 
     //--------just wanna see if we revert back to OG position, will it still work?
 
-    // const formData = new FormData();
+    const formData = new FormData();
 
-    // formData.append("name", address.name);
-    // formData.append("email", address.email);
-    // formData.append("price", totalCost);
-    // formData.append("color", frameColor);
-    // formData.append("country", address.country);
-    // formData.append("pnum", address.pnum);
-    // formData.append("zip", address.zip);
-    // formData.append("addr", address.addr);
-    // formData.append("city", address.city);
-    // formData.append("frame", activeStyle);
-    // formData.append("status", "Pending");
+    formData.append("name", address.name);
+    formData.append("email", address.email);
+    formData.append("price", totalCost);
+    formData.append("color", frameColor);
+    formData.append("country", address.country);
+    formData.append("pnum", address.pnum);
+    formData.append("zip", address.zip);
+    formData.append("addr", address.addr);
+    formData.append("city", address.city);
+    formData.append("frame", activeStyle);
+    formData.append("status", "Pending");
 
-    // // Add images
-    // for (let i = 0; i < selectedImagesGlobal.length; i++) {
-    //   const uri = selectedImagesGlobal[i];
-    //   console.log("This is the uri for images", uri);
-    //   const blob = await uriToBlob(uri);
-    //   // this has the filename of the image taken through URI
-    //   const filename = selectedImagesGlobal[i].split("/").pop();
-    //   // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
-    //   //const match = /\.(\w+)$/.exec(filename);
-    //   // assigning image/jpg, if match is jpg
-    //   //const type = match ? `image/${match[1]}` : `image`;
-    //   formData.append("images", {
-    //     uri,
-    //     name: filename,
-    //     type: blob.type,
-    //   });
-    // }
+    // Add images
+    for (let i = 0; i < selectedImagesGlobal.length; i++) {
+      const uri = selectedImagesGlobal[i];
+      console.log("This is the uri for images", uri);
+      const blob = await uriToBlob(uri);
+      // this has the filename of the image taken through URI
+      const filename = selectedImagesGlobal[i].split("/").pop();
+      // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
+      //const match = /\.(\w+)$/.exec(filename);
+      // assigning image/jpg, if match is jpg
+      //const type = match ? `image/${match[1]}` : `image`;
+      formData.append("images", {
+        uri,
+        name: filename,
+        type: blob.type,
+      });
+    }
 
-    // //console.log("This is the data from formData", data);
+    //console.log("This is the data from formData", data);
 
-    // //sending form data to server
-    // try {
-    //   const response = await fetch("https://backend.framer.pk/order", {
-    //     method: "POST",
-    //     body: formData,
-    //     headers: {
-    //       "content-type": "multipart/form-data",
-    //       userid: "668e636cdfb7272abd65a759",
-    //       Authorization:
-    //         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
-    //     },
-    //   });
+    //sending form data to server
+    try {
+      const response = await fetch("https://backend.framer.pk/order", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+          userid: "668e636cdfb7272abd65a759",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+        },
+      });
 
-    //   console.log(
-    //     "response from post order (response.text)",
-    //     await response.text()
-    //   );
-    //   setModalOrderSuccess(true);
+      console.log(
+        "response from post order (response.text)",
+        await response.text()
+      );
+      setModalOrderSuccess(true);
 
-    //   // console.log(
-    //   //   "response from post order (response.body)",
-    //   //   response.body
-    //   // );
+      // console.log(
+      //   "response from post order (response.body)",
+      //   response.body
+      // );
 
-    //   // console.log(
-    //   //   "response from post order (response.json)",
-    //   //   await response.json()
-    //   // );
+      // console.log(
+      //   "response from post order (response.json)",
+      //   await response.json()
+      // );
 
-    //   // console.log("are our images that b")
-    //   //const result = await response.json();
-    //   //console.log("response in json format", result);
-    // } catch (err) {
-    //   console.log("Error from post order", err);
-    //   Alert.alert("Order not confirmed, please try again");
-    // }
-    setModalOrderSuccess(true);
+      // console.log("are our images that b")
+      //const result = await response.json();
+      //console.log("response in json format", result);
+    } catch (err) {
+      console.log("Error from post order", err);
+      Alert.alert("Order not confirmed, please try again");
+    }
+    //setModalOrderSuccess(true);
   };
 
   // const handlePlaceOrder = () => {
@@ -349,76 +349,76 @@ export default function PhotoStyling() {
 
         //-------lets try this on handleCheckout and see if it works
 
-        const formData = new FormData();
+        // const formData = new FormData();
 
-        formData.append("name", address.name);
-        formData.append("email", address.email);
-        formData.append("price", totalCost);
-        formData.append("color", frameColor);
-        formData.append("country", address.country);
-        formData.append("pnum", address.pnum);
-        formData.append("zip", address.zip);
-        formData.append("addr", address.addr);
-        formData.append("city", address.city);
-        formData.append("frame", activeStyle);
-        formData.append("status", "Pending");
+        // formData.append("name", address.name);
+        // formData.append("email", address.email);
+        // formData.append("price", totalCost);
+        // formData.append("color", frameColor);
+        // formData.append("country", address.country);
+        // formData.append("pnum", address.pnum);
+        // formData.append("zip", address.zip);
+        // formData.append("addr", address.addr);
+        // formData.append("city", address.city);
+        // formData.append("frame", activeStyle);
+        // formData.append("status", "Pending");
 
-        // Add images
-        for (let i = 0; i < selectedImagesGlobal.length; i++) {
-          const uri = selectedImagesGlobal[i];
-          console.log("This is the uri for images", uri);
-          const blob = await uriToBlob(uri);
-          // this has the filename of the image taken through URI
-          const filename = selectedImagesGlobal[i].split("/").pop();
-          // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
-          //const match = /\.(\w+)$/.exec(filename);
-          // assigning image/jpg, if match is jpg
-          //const type = match ? `image/${match[1]}` : `image`;
-          formData.append("images", {
-            uri,
-            name: filename,
-            type: blob.type,
-          });
-        }
+        // // Add images
+        // for (let i = 0; i < selectedImagesGlobal.length; i++) {
+        //   const uri = selectedImagesGlobal[i];
+        //   console.log("This is the uri for images", uri);
+        //   const blob = await uriToBlob(uri);
+        //   // this has the filename of the image taken through URI
+        //   const filename = selectedImagesGlobal[i].split("/").pop();
+        //   // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
+        //   //const match = /\.(\w+)$/.exec(filename);
+        //   // assigning image/jpg, if match is jpg
+        //   //const type = match ? `image/${match[1]}` : `image`;
+        //   formData.append("images", {
+        //     uri,
+        //     name: filename,
+        //     type: blob.type,
+        //   });
+        // }
 
-        //console.log("This is the data from formData", data);
+        // //console.log("This is the data from formData", data);
 
-        //sending form data to server
-        try {
-          const response = await fetch("https://backend.framer.pk/order", {
-            method: "POST",
-            body: formData,
-            headers: {
-              "content-type": "multipart/form-data",
-              userid: "668e636cdfb7272abd65a759",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
-            },
-          });
+        // //sending form data to server
+        // try {
+        //   const response = await fetch("https://backend.framer.pk/order", {
+        //     method: "POST",
+        //     body: formData,
+        //     headers: {
+        //       "content-type": "multipart/form-data",
+        //       userid: "668e636cdfb7272abd65a759",
+        //       Authorization:
+        //         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+        //     },
+        //   });
 
-          console.log(
-            "response from post order (response.text)",
-            await response.text()
-          );
-          setModalOrderSuccess(true);
+        //   console.log(
+        //     "response from post order (response.text)",
+        //     await response.text()
+        //   );
+        //   setModalOrderSuccess(true);
 
-          // console.log(
-          //   "response from post order (response.body)",
-          //   response.body
-          // );
+        //   // console.log(
+        //   //   "response from post order (response.body)",
+        //   //   response.body
+        //   // );
 
-          // console.log(
-          //   "response from post order (response.json)",
-          //   await response.json()
-          // );
+        //   // console.log(
+        //   //   "response from post order (response.json)",
+        //   //   await response.json()
+        //   // );
 
-          // console.log("are our images that b")
-          //const result = await response.json();
-          //console.log("response in json format", result);
-        } catch (err) {
-          console.log("Error from post order", err);
-          Alert.alert("Order not confirmed, please try again");
-        }
+        //   // console.log("are our images that b")
+        //   //const result = await response.json();
+        //   //console.log("response in json format", result);
+        // } catch (err) {
+        //   console.log("Error from post order", err);
+        //   Alert.alert("Order not confirmed, please try again");
+        // }
 
         // axios
         //   .post("https://backend.framer.pk/order", data, {
