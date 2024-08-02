@@ -1,98 +1,107 @@
 import { useRoute } from "@react-navigation/native";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 
 export default function OrderDetails() {
   const route = useRoute();
   const { order } = route.params;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStatic}>
-          Name:
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamic}>
-          {order.name}
-        </Text>
-      </View>
-      <View style={styles.line} />
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStatic}>
-          Phone #:
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamic}>
-          {order.pnum}
-        </Text>
-      </View>
-      <View style={styles.line} />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStatic}>
+            Name:
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamic}>
+            {order.name}
+          </Text>
+        </View>
+        <View style={styles.line} />
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStatic}>
+            Phone #:
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamic}>
+            {order.pnum}
+          </Text>
+        </View>
+        <View style={styles.line} />
 
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStatic}>
-          Address:{" "}
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamic}>
-          {order.addr}
-        </Text>
-      </View>
-      <View style={styles.line} />
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStatic}>
+            Address:{" "}
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamic}>
+            {order.addr}
+          </Text>
+        </View>
+        <View style={styles.line} />
 
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStatic}>
-          Date:
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamic}>
-          {new Date(order.createdAt).toLocaleString()}
-        </Text>
-      </View>
-      <View style={styles.line} />
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStatic}>
+            Date:
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamic}>
+            {new Date(order.createdAt).toLocaleString()}
+          </Text>
+        </View>
+        <View style={styles.line} />
 
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStatic}>
-          Status:
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamic}>
-          {order.status}
-        </Text>
-      </View>
-      <View style={styles.line} />
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStatic}>
+            Status:
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamic}>
+            {order.status}
+          </Text>
+        </View>
+        <View style={styles.line} />
 
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStatic}>
-          No. Of Images:
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamic}>
-          {order.images.length}
-        </Text>
-      </View>
-      <View style={styles.line} />
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStatic}>
+            No. Of Images:
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamic}>
+            {order.images.length}
+          </Text>
+        </View>
+        <View style={styles.line} />
 
-      <View style={styles.row}>
-        <Text allowFontScaling={false} style={styles.textStaticPrice}>
-          Price:
-        </Text>
-        <Text allowFontScaling={false} style={styles.textDynamicPrice}>
-          {order.price}
-        </Text>
+        {/* add image logic here */}
+
+        <View style={styles.row}>
+          <Text allowFontScaling={false} style={styles.textStaticPrice}>
+            Price:
+          </Text>
+          <Text allowFontScaling={false} style={styles.textDynamicPrice}>
+            {order.price}
+          </Text>
+        </View>
+        <View style={styles.line} />
       </View>
-      <View style={styles.line} />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
+    //flexDirection: "column",
   },
   textDynamic: {
-    fontSize: 16,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    fontSize: 15,
     marginVertical: 10,
+    marginRight: 50,
     color: "#808080",
   },
   textStatic: {
-    fontSize: 16,
+    flexWrap: "wrap",
+    fontSize: 15,
     marginVertical: 10,
+
     color: "#EA9B3F",
     fontWeight: "600",
   },
@@ -102,7 +111,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   line: {
-    width: "100%",
+    width: "102%",
     height: 1,
     // backgroundColor: "black",
     marginVertical: 1,
@@ -117,6 +126,7 @@ const styles = StyleSheet.create({
   textDynamicPrice: {
     fontSize: 26,
     marginVertical: 10,
+    marginHorizontal: 50,
     fontWeight: "bold",
     color: "#808080",
   },

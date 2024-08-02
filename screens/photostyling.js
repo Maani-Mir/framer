@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Parallelogram from "../components/parallelogram";
@@ -62,6 +63,9 @@ export default function PhotoStyling() {
   const [resizeMode, setResizeMode] = useState("cover");
   // for changing of classic and bold
   const [activeStyle, setActiveStyle] = useState("bold");
+  // to show loader when waiting
+  const [isLoading, setIsLoading] = useState(false);
+
   let frameColor = "white";
 
   //const [isAddressValid, setIsAddressValid] = useState(false);
@@ -184,6 +188,7 @@ export default function PhotoStyling() {
 
   const handleCheckout = async () => {
     setModalVisible(false);
+    setIsLoading(true); // loaderr activated
 
     //--------just wanna see if we revert back to OG position, will it still work?
 
@@ -239,25 +244,12 @@ export default function PhotoStyling() {
         await response.text()
       );
       setModalOrderSuccess(true);
-
-      // console.log(
-      //   "response from post order (response.body)",
-      //   response.body
-      // );
-
-      // console.log(
-      //   "response from post order (response.json)",
-      //   await response.json()
-      // );
-
-      // console.log("are our images that b")
-      //const result = await response.json();
-      //console.log("response in json format", result);
     } catch (err) {
       console.log("Error from post order", err);
       Alert.alert("Order not confirmed, please try again");
+    } finally {
+      setIsLoading(false); //loader done
     }
-    //setModalOrderSuccess(true);
   };
 
   // const handlePlaceOrder = () => {
@@ -284,6 +276,7 @@ export default function PhotoStyling() {
   //   //address = updatedAddress;
   //   //console.log("This is the global address variable that is set", address);
   // };
+
   //function to convert URI to blob
   const uriToBlob = async (uri) => {
     const response = await fetch(uri);
@@ -294,7 +287,7 @@ export default function PhotoStyling() {
   const goToAddressList = () => {
     // setModalVisible(false);
     navigation.navigate("AddressList", {
-      onDone: async (address) => {
+      onDone: (address) => {
         // console.log(
         //   "This is the address we got after clicking the addresslist pressable",
         //   address
@@ -561,6 +554,7 @@ export default function PhotoStyling() {
         viewabilityConfig={viewabilityConfig}
         // contentContainerStyle={styles.flatListContent}
       />
+      {isLoading && <ActivityIndicator size="large" color="#EA9B3F" />}
       <View style={styles.imageEditingStyle}>
         <Pressable style={styles.removeButtonImagePress} onPress={handleRemove}>
           <Text
@@ -705,6 +699,7 @@ export default function PhotoStyling() {
         </View>
       </Modal>
       {/* Order Success modal */}
+
       <Modal
         animationType="slide"
         transparent={true}
