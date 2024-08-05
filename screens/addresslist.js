@@ -11,6 +11,7 @@ import { FlatList } from "react-native-gesture-handler";
 export default function AddressList() {
   const [addressData, setAddressData] = useState([]);
   const navigation = useNavigation();
+  // when screen is in focus, perform certain actions (here it is to getAllAddresses)
   const isFocused = useIsFocused();
   // const route = useRoute();
   // const { onDone } = route.params;
@@ -19,7 +20,7 @@ export default function AddressList() {
     const headers = {
       userid: "668e636cdfb7272abd65a759",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
     };
     axios
       .get("https://backend.framer.pk/address", {
@@ -104,7 +105,7 @@ const AddressCard = ({ address, getAllAddresses }) => {
     const headers = {
       userid: "668e636cdfb7272abd65a759",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMTk5NzI5MiwiZXhwIjoxNzIyNjAyMDkyfQ.T_TEyGfBro254mSh5vTuY15ypOaLL4AMWe_S0WVpi7w",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
     };
     axios
       .delete(`https://backend.framer.pk/address/${address._id}`, {

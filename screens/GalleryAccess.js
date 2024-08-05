@@ -20,9 +20,50 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import PhotoStyling from "./photostyling";
 import { useRoute } from "@react-navigation/native";
 // import { useNavigation } from "@react-navigation/native";
+import { createSlice, configureStore } from "@reduxjs/toolkit";
+
+const imageSlice = createSlice({
+  name: "image",
+  initialState: {
+    value: "",
+  },
+  reducers: {
+    imageManipulation: (state) => {
+      state.value = handlePress(uri);
+    },
+  },
+});
+
+const counterImageSlice = createSlice({
+  name: "counter",
+  initialState: {
+    value: 0,
+  },
+  reducers: {
+    incremented: (state) => {
+      state.value += 1;
+    },
+    decremented: (state) => {
+      state.value -= 1;
+    },
+  },
+});
+
+export const { incremented, decremented } = counterImageSlice.actions;
+export const { imageManipulation } = imageSlice.actions;
+
+const store = configureStore({
+  reducer: counterImageSlice.reducer,
+  reducer: imageSlice.reducer,
+});
+
+// store.subscribe(() => console.log(store.getState()))
 
 const initialLayout = { width: Dimensions.get("window").width };
 
+// i don't know what i was smoking when i thought
+// i should use a global array for mainitaining the most
+// critical part of the app, the images
 var selectedImagesGlobal = new Array();
 
 // async function getAlbums(setAlbums, permissionResponse, requestPermission) {
@@ -55,20 +96,20 @@ export default function GalleryAccess({ navigation }) {
 
   // const memoAlbums = memo(() => getAlbums(), [albums]);
 
-  useEffect(() => {
-    async function getAlbums() {
-      console.log("are we getting in getalbums?");
-      if (permissionResponse.status !== "granted") {
-        await requestPermission();
-      }
-      const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
-        includeSmartAlbums: true,
-      });
-
-      console.log("albums that are fetched", fetchedAlbums);
-      setAlbums(fetchedAlbums);
+  async function getAlbums() {
+    console.log("are we getting in getalbums?");
+    if (permissionResponse.status !== "granted") {
+      await requestPermission();
     }
+    const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
+      includeSmartAlbums: true,
+    });
 
+    console.log("albums that are fetched", fetchedAlbums);
+    setAlbums(fetchedAlbums);
+  }
+
+  useEffect(() => {
     getAlbums();
   }, [permissionResponse]);
 
@@ -160,16 +201,17 @@ function AlbumEntry({ album, onImageSelect }) {
     console.log("Images that should show border color", selectedImages);
   }, [selectedImages]);
 
+  async function getAlbumAssets() {
+    setLoading(true);
+    const albumAssets = await MediaLibrary.getAssetsAsync({
+      album,
+      first: 20,
+    });
+    setAssets(albumAssets.assets);
+    setLoading(false);
+  }
+
   useEffect(() => {
-    async function getAlbumAssets() {
-      setLoading(true);
-      const albumAssets = await MediaLibrary.getAssetsAsync({
-        album,
-        first: 20,
-      });
-      setAssets(albumAssets.assets);
-      setLoading(false);
-    }
     console.log("album assets");
     getAlbumAssets();
   }, [album]);
