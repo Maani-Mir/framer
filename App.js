@@ -31,6 +31,8 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ImageSliderScreen from "./screens/imageslider";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 //const navigation = useNavigation();
 //do i really have to make StackNav for every drawer just to get the status bar right?
@@ -155,9 +157,11 @@ export default App = () => {
     );
   }
   return (
-    <NavigationContainer>
-      <MyDrawer />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <MyDrawer />
+      </NavigationContainer>
+    </Provider>
   );
 };
 

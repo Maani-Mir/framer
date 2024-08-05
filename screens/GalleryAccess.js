@@ -20,42 +20,8 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import PhotoStyling from "./photostyling";
 import { useRoute } from "@react-navigation/native";
 // import { useNavigation } from "@react-navigation/native";
-import { createSlice, configureStore } from "@reduxjs/toolkit";
-
-const imageSlice = createSlice({
-  name: "image",
-  initialState: {
-    value: "",
-  },
-  reducers: {
-    imageManipulation: (state) => {
-      state.value = handlePress(uri);
-    },
-  },
-});
-
-const counterImageSlice = createSlice({
-  name: "counter",
-  initialState: {
-    value: 0,
-  },
-  reducers: {
-    incremented: (state) => {
-      state.value += 1;
-    },
-    decremented: (state) => {
-      state.value -= 1;
-    },
-  },
-});
-
-export const { incremented, decremented } = counterImageSlice.actions;
-export const { imageManipulation } = imageSlice.actions;
-
-const store = configureStore({
-  reducer: counterImageSlice.reducer,
-  reducer: imageSlice.reducer,
-});
+import { imageAdd, imageRemove, flushImages } from "../redux/imagesslice";
+import { useDispatch, useSelector } from "react-redux";
 
 // store.subscribe(() => console.log(store.getState()))
 
@@ -64,43 +30,44 @@ const initialLayout = { width: Dimensions.get("window").width };
 // i don't know what i was smoking when i thought
 // i should use a global array for mainitaining the most
 // critical part of the app, the images
+
 var selectedImagesGlobal = new Array();
 
-// async function getAlbums(setAlbums, permissionResponse, requestPermission) {
-//   if (permissionResponse.status !== "granted") {
-//     await requestPermission();
-//   }
-//   const fetchedAlbums = await MediaLibrary.getAlbumAsync({
-//     includeSmartAlbums: true,
-//   });
-//   setAlbums(fetchedAlbums);
-// }
-
-// async function getAlbumAssets(album, setAssets, setLoading) {
-//   setLoading(true);
-//   const albumAssets = await MediaLibrary.getAssetsAsync({
-//     album,
-//     first: 20,
-//   });
-//   setAssets(albumAssets.assets);
-//   setLoading(false);
-// }
-
 export default function GalleryAccess({ navigation }) {
+  const image = useSelector((state) => {
+    console.log("consoling state in selector", state.image);
+    return state.image;
+  });
+
+  console.log("set image redux in gallery", image);
+  const dispatch = useDispatch();
+
+  // dispatch(imageAdd(uri, prevSelectedImages));
+
   const route = useRoute();
   const [albums, setAlbums] = useState([]);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [selectedCount, setSelectedCount] = useState([]);
+
   // const userId = route.params.userId;
   // const userToken = route.params.token;
 
   // const memoAlbums = memo(() => getAlbums(), [albums]);
 
+  // after adding or removing images from addImage and addRemove,
+  // see from below useEffect if we're adding or removing it correctly
+  useEffect(() => {
+    console.log("imageRedux in useEffect?", image);
+  }, [image]);
+
   async function getAlbums() {
     console.log("are we getting in getalbums?");
+
     if (permissionResponse.status !== "granted") {
       await requestPermission();
     }
+    // dispatch(imageAdd());
+
     const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
       includeSmartAlbums: true,
     });
@@ -110,21 +77,23 @@ export default function GalleryAccess({ navigation }) {
   }
 
   useEffect(() => {
+    console.log("imageRedux in useEffect?", image);
+
     getAlbums();
   }, [permissionResponse]);
 
-  const handleImageSelection = (updatedSelection) => {
-    setSelectedCount([...updatedSelection]);
-  };
+  // const handleImageSelection = (updatedSelection) => {
+  //   setSelectedCount([...new Set(updatedSelection)]);
+  // };
 
   const handleProceed = () => {
-    if (selectedImagesGlobal.length < 3) {
+    if (image.count < 3) {
       Alert.alert("Select atleast 3 images to proceed");
       return;
     }
     console.log("Selected Images on gallery access", selectedImagesGlobal);
 
-    navigation.navigate("PhotoStyling", { selectedImagesGlobal });
+    navigation.navigate("PhotoStyling");
   };
 
   if (!albums) {
@@ -133,9 +102,19 @@ export default function GalleryAccess({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text allowFontScaling={false} style={styles.headerSelectedImagesText}>
-        Selected Images: {selectedImagesGlobal.length}
-      </Text>
+      <View style={styles.row}>
+        <Text allowFontScaling={false} style={styles.headerSelectedImagesText}>
+          Selected Images: {image.count}
+        </Text>
+        <Pressable
+          style={styles.unselectStyle}
+          onPress={() => {
+            dispatch(flushImages());
+          }}
+        >
+          <Text>Unselect All</Text>
+        </Pressable>
+      </View>
       {/* <AlbumTabs
         // style={{ marginTop: -350 }}
         albums={memoAlbums}
@@ -147,7 +126,8 @@ export default function GalleryAccess({ navigation }) {
             <AlbumEntry
               key={album.id}
               album={album}
-              onImageSelect={handleImageSelection}
+              image={image}
+              //onImageSelect={handleImageSelection}
             />
           ))}
       </ScrollView>
@@ -160,44 +140,53 @@ export default function GalleryAccess({ navigation }) {
   );
 }
 
-function AlbumTabs({ albums, handleImageSelection }) {
-  const [index, setIndex] = useState(0);
-  const [routes] = useState(
-    albums.map((album) => ({
-      key: album.id,
-      title: album.title,
-    }))
-  );
+// function AlbumTabs({ albums, handleImageSelection }) {
+//   const [index, setIndex] = useState(0);
+//   const [routes] = useState(
+//     albums.map((album) => ({
+//       key: album.id,
+//       title: album.title,
+//     }))
+//   );
 
-  const renderScene = SceneMap(
-    albums.reduce((scenes, album) => {
-      scenes[album.id] = () => (
-        <AlbumEntry album={album} onImageSelect={handleImageSelection} />
-      );
-      return scenes;
-    }, {})
-  );
+//   const renderScene = SceneMap(
+//     albums.reduce((scenes, album) => {
+//       scenes[album.id] = () => (
+//         <AlbumEntry album={album} onImageSelect={handleImageSelection} />
+//       );
+//       return scenes;
+//     }, {})
+//   );
 
-  return (
-    // <View style={styles.tabViewContainer}>
-    <TabView
-      renderTabBar={() => null}
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={initialLayout}
-      style={styles.tabView}
-    />
-    // </View>
-  );
-}
+//   return (
+//     // <View style={styles.tabViewContainer}>
+//     <TabView
+//       renderTabBar={() => null}
+//       navigationState={{ index, routes }}
+//       renderScene={renderScene}
+//       onIndexChange={setIndex}
+//       initialLayout={initialLayout}
+//       style={styles.tabView}
+//     />
+//     // </View>
+//   );
+// }
 
-function AlbumEntry({ album, onImageSelect }) {
+function AlbumEntry({ album, image }) {
   const [assets, setAssets] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    if (image.value != undefined) {
+      setSelectedImages(image.value);
+    }
+  }, [image]);
+
+  useEffect(() => {
+    console.log("set image redux in album entry", image);
+
     console.log("Images that should show border color", selectedImages);
   }, [selectedImages]);
 
@@ -216,41 +205,40 @@ function AlbumEntry({ album, onImageSelect }) {
     getAlbumAssets();
   }, [album]);
 
-  const handlePress = (uri) => {
+  const handlePress = async (uri) => {
     setSelectedImages((prevSelectedImages) => {
-      if (prevSelectedImages.includes(uri)) {
+      if (selectedImages.includes(uri)) {
         const updatedSelection = prevSelectedImages.filter(
           (imageUri) => imageUri !== uri
         );
-        //to show how many images are selected
-        onImageSelect(updatedSelection);
+        // //to show how many images are selected
+        //onImageSelect(updatedSelection);
 
-        console.log("updatedSelection", updatedSelection);
-        // selectedImagesGlobal = selectedImagesGlobal.concat(updatedSelection);
-        selectedImagesGlobal = updatedSelection;
-        selectedImagesGlobal = [...new Set(selectedImagesGlobal)];
-        // const filteredArray = selectedImagesGlobal.filter((value) =>
-        //   updatedSelection.includes(value)
-        // );
-        // selectedImagesGlobal = selectedImagesGlobal.concat(filteredArray);
+        // console.log("updatedSelection", updatedSelection);
 
-        console.log("Image removed", selectedImagesGlobal);
+        dispatch(imageRemove({ uri }));
 
-        return selectedImagesGlobal;
+        // selectedImagesGlobal = updatedSelection;
+        // selectedImagesGlobal = [...new Set(selectedImagesGlobal)];
+
+        // console.log("Image removed", selectedImagesGlobal);
+
+        return updatedSelection;
       } else {
+        dispatch(imageAdd({ uri }));
         const updatedSelection = [...prevSelectedImages, uri];
-        //console.log("Selected Images before global", updatedSelection);
 
-        //to show how many images are selected
-        onImageSelect(updatedSelection);
+        // //to show how many images are selected
+        // onImageSelect(updatedSelection);
 
-        selectedImagesGlobal = selectedImagesGlobal.concat(updatedSelection);
-        selectedImagesGlobal = [...new Set(selectedImagesGlobal)];
-        console.log("Image added", selectedImagesGlobal);
+        // selectedImagesGlobal = selectedImagesGlobal.concat(updatedSelection);
+        // selectedImagesGlobal = [...new Set(selectedImagesGlobal)];
+        // console.log("Image added", selectedImagesGlobal);
 
-        return selectedImagesGlobal;
+        return updatedSelection;
       }
     });
+
     // if (selectedImages.includes(uri)) {
     //   setSelectedImages(selectedImages.filter((imageUri) => imageUri !== uri));
     //   selectedImagesGlobal = selectedImages;
@@ -276,18 +264,27 @@ function AlbumEntry({ album, onImageSelect }) {
             </Text>
           ) : (
             // assets &&
-            assets.map((image) => (
-              // console.log(image)
+            assets.map((_image) => (
               <TouchableOpacity
-                key={image.id}
-                onPress={() => handlePress(image.uri)}
+                key={_image.id}
+                onPress={() => {
+                  console.log("are we getting any uri", _image);
+                  console.log(
+                    "are we getting any uri (saadi image)",
+                    image.value
+                  );
+
+                  handlePress(_image.uri);
+                }}
               >
                 <Image
                   style={[
                     styles.imageStyle,
-                    selectedImages.includes(image.uri) && styles.selectedImage,
+                    image.value != undefined
+                      ? image.value.includes(_image.uri) && styles.selectedImage
+                      : {},
                   ]}
-                  source={{ uri: image.uri }}
+                  source={{ uri: _image.uri }}
                   width={100}
                   height={100}
                 />
@@ -311,6 +308,10 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  row: {
+    flexDirection: "row",
+    // justifyContent: "space-evenly",
+  },
   tabViewContainer: {
     height: 20,
   },
@@ -322,7 +323,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     padding: 10,
-    textAlign: "center",
+    // textAlign: "center",
   },
   albumContainer: {
     paddingHorizontal: 5,
@@ -361,4 +362,19 @@ const styles = StyleSheet.create({
     borderRadius: 7,
   },
   buttonText: { fontSize: 15, color: "white", fontWeight: "bold" },
+  unselectStyle: {
+    // marginTop: 0,
+    marginLeft: "auto",
+    marginRight: 30,
+    // position: "relative",
+    width: 140,
+    height: 50,
+    backgroundColor: "#EA9B3F",
+    textAlign: "center",
+    // position: "absolute",
+    // alignSelf: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    borderRadius: 7,
+  },
 });
