@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -13,20 +13,40 @@ import {
 import ImageCropPicker from "react-native-image-crop-picker";
 
 import * as ImageManipulator from "expo-image-manipulator";
+import { croppedImageAdd } from "../redux/imagesslice";
+import { useDispatch, useSelector } from "react-redux";
 //import { CropView } from "expo-image-crop";
 
 export default function ImageAdjustScreen({ navigation }) {
+  const dispatch = useDispatch();
   const route = useRoute();
   //console.log(ImagePicker);
   //const navigation = useNavigation;
 
-  const { imageUri, updateImage } = route.params;
-  const [croppedImageUri, setCroppedImageUri] = useState(imageUri);
+  const image = useSelector((state) => {
+    //console.log("consoling state in selector", state.image);
+    return state.image;
+  });
 
+  console.log("what are the route params", route.params);
+
+  const [imageUri, setImageUri] = useState();
+  const [indexStyle, setIndexStyle] = useState();
+  const [croppedImageUri, setCroppedImageUri] = useState();
+
+  useEffect(() => {
+    setImageUri(route.params.imageUri.original);
+    setCroppedImageUri(route.params.imageUri.original);
+    setIndexStyle(route.params.indexStyle);
+  }, []);
+
+  console.log("croppedImageUri before doing anything", croppedImageUri);
   //below two statements are related to "CropView"
   //  const [showCropView, setShowCropView] = useState(true);
   //  const cropViewRef = React.useRef();
   console.log("should get an image at start here", imageUri);
+  console.log("should get the image index at start here", indexStyle);
+
   //--------image crop picker code
   const cropImage = () => {
     ImageCropPicker.openCropper({
@@ -34,9 +54,10 @@ export default function ImageAdjustScreen({ navigation }) {
       width: 300,
       height: 400,
     })
-      .then((image) => {
-        console.log("We should get some sorta image here", image);
-        setCroppedImageUri(image.path);
+      .then((_image) => {
+        console.log("We should get some sorta image here", _image);
+        setCroppedImageUri(_image.path);
+        setImageUri(_image.path);
       })
       .catch((error) => {
         console.error("Error cropping image: ", error);
@@ -61,9 +82,38 @@ export default function ImageAdjustScreen({ navigation }) {
   };
 */
   const handleDone = () => {
-    updateImage(croppedImageUri);
+    console.log(
+      "this is the cropped imageUri, before assigning",
+      croppedImageUri
+    );
+
+    // for (let i = 0; i < image.count; i++) {
+    //   if (image.value[i] == imageUri) {
+    //     image.value[i] = croppedImageUri;
+    //   }
+    // }
+
+    // image.value.map((_imageUri, index) =>
+    //   console.log("this is the index in the map", index)
+    //   index == imageUri ? croppedImageUri : image
+    // );
+
+    // useEffect(() => {
+    //   setImageUri(route.params.imageUri || "");
+    // }, [route.params.imageUri]);
+
+    // setImageUri(croppedImageUri);
+    dispatch(croppedImageAdd({ index: indexStyle, uri: imageUri }));
+
+    console.log("updated state array with the cropped image", image.value);
+
     navigation.goBack();
   };
+
+  useEffect(() => {
+    console.log("final cropped imageUri, is it the one?", imageUri);
+    // setImageUri(route.params.imageUri || "");
+  }, [imageUri]);
 
   //------manipulator code end
 
@@ -73,7 +123,7 @@ export default function ImageAdjustScreen({ navigation }) {
   //     setCroppedImageUri(uri);
   //     setShowCropView(false);
   //   } else {
-  //     updateImage(croppedImageUri);
+  //     setImageUri(croppedImageUri);
   //     navigation.goBack();
   //   }
   // };

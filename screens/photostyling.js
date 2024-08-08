@@ -19,6 +19,9 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import * as FileSystem from "expo-file-system";
 
+import { useDispatch, useSelector } from "react-redux";
+import { imageRemove, flushImages } from "../redux/imagesslice";
+
 // import { ScrollView } from "react-native-gesture-handler";
 
 // import GalleryAccess from "./GalleryAccess";
@@ -35,15 +38,22 @@ export default function PhotoStyling() {
   // console.log("This is the user id", userId);
   // console.log("This is the user token", userToken);
 
+  const image = useSelector((state) => {
+    //console.log("consoling state in selector", state.image);
+    return state.image;
+  });
+
+  const dispatch = useDispatch();
+
+  //console.log("set image redux in photostyling", image);
+
   const route = useRoute();
   const navigation = useNavigation();
   // state to hold the border color of the styled images
   const [borderColor, setBorderColor] = useState("white");
 
   //state to hold the updated array of images selected for styling
-  const [selectedImagesGlobal, setSelectedImagesGlobal] = useState(
-    route.params.selectedImagesGlobal || []
-  );
+  const [selectedImagesGlobal, setSelectedImagesGlobal] = useState([]);
 
   // console.log(
   //   "We are at photostyling and selected images are: ",
@@ -54,7 +64,9 @@ export default function PhotoStyling() {
   //order placed successfull modal
   const [modalOrderSuccess, setModalOrderSuccess] = useState(false);
   // this state is set when the user presses the styled image for cropping or removing
-  const [currentVisibleIndex, setCurrentVisibleIndex] = useState(0);
+  const [uri, setUri] = useState(0);
+  // this is for setting the index of the styled image at hand
+  const [indexForStyle, setIndexForStyle] = useState(0);
   // this state is to keep the address of the user
   const [address, setAddress] = useState([]);
   //state to hold which image we are at in the array of images selected for styling
@@ -93,7 +105,12 @@ export default function PhotoStyling() {
   // callback to handle visible items change
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems && viewableItems.length > 0) {
-      setCurrentVisibleIndex(viewableItems[0].index);
+      console.log(
+        "viewable items, can we get uri here????",
+        viewableItems[0].item
+      );
+      setUri(viewableItems[0].item);
+      setIndexForStyle(viewableItems[0].index);
     }
   }).current;
 
@@ -105,18 +122,22 @@ export default function PhotoStyling() {
   const handleRemove = () => {
     console.log("remove button was pressed");
 
-    if (selectedImagesGlobal.length > 3) {
-      console.log("number of images before cut", selectedImagesGlobal.length);
-      console.log("Images before cut", selectedImagesGlobal);
-      setSelectedImagesGlobal((prev) =>
-        prev.filter((_, index) => index != currentVisibleIndex)
-      );
+    if (image.count > 3) {
+      console.log("number of images before cut", image.count);
+      console.log("Images before cut", image.value);
+      // setSelectedImagesGlobal((prev) =>
+      //   prev.filter((_, index) => index != uri)
+      // );
+
+      //console.log("this is the uri that is going to dispatch!!", uri);
+      dispatch(imageRemove({ uri: uri.original }));
+
       // const updatedImages = selectedImagesGlobal.filter(
       //   (image) => image !== currentImage
       // );
       // route.params.selectedImagesGlobal = updatedImages;
-      console.log("number of images after cut", selectedImagesGlobal.length);
-      console.log("Images after cut", selectedImagesGlobal);
+      console.log("number of images after cut", image.count);
+      console.log("Images after cut", image.value);
       //setImagePressModalVisible(false);
     } else {
       Alert.alert("Error, atleast 3 images should be selected for styling.");
@@ -127,17 +148,22 @@ export default function PhotoStyling() {
 
   const handleAdjust = () => {
     console.log("adjust button was pressed");
+
     //setImagePressModalVisible(false);
     navigation.navigate("ImageAdjustScreen", {
-      imageUri: selectedImagesGlobal[currentVisibleIndex],
-      updateImage: (newImageUri) => {
-        setSelectedImagesGlobal((prev) =>
-          prev.map((image, index) =>
-            index === currentVisibleIndex ? newImageUri : image
-          )
-        );
-      },
+      imageUri: uri,
+      indexStyle: indexForStyle,
+      // setImageUri: (newImageUri) => {
+      //   console.log(
+      //     "is it the new cropped image uri in photostyling???",
+      //     newImageUri
+      //   );
+      //   image.value.map((image, index) =>
+      //     index === uri ? newImageUri : image
+      //   );
+      // },
     });
+    console.log("The total store array", image.value);
   };
 
   // const handleCancel = () => {
@@ -145,7 +171,7 @@ export default function PhotoStyling() {
   //   setImagePressModalVisible(false);
   // };
 
-  if (selectedImagesGlobal.length === 0) {
+  if (image.count === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Text allowFontScaling={false} style={styles.emptyText}>
@@ -161,7 +187,7 @@ export default function PhotoStyling() {
       <View style={styles.frame}>
         <View style={[styles.main, { borderColor: borderColor }]}>
           <Image
-            source={{ uri: item }}
+            source={{ uri: item.cropped != "" ? item.cropped : item.original }}
             style={[styles.image, { resizeMode }]}
           />
         </View>
@@ -190,6 +216,8 @@ export default function PhotoStyling() {
     setModalVisible(false);
     setIsLoading(true); // loaderr activated
 
+    console.log("Final check", image.value);
+
     //--------just wanna see if we revert back to OG position, will it still work?
 
     const formData = new FormData();
@@ -207,22 +235,28 @@ export default function PhotoStyling() {
     formData.append("status", "Pending");
 
     // Add images
-    for (let i = 0; i < selectedImagesGlobal.length; i++) {
-      const uri = selectedImagesGlobal[i];
-      console.log("This is the uri for images", uri);
-      const blob = await uriToBlob(uri);
+    for (let i = 0; i < image.count; i++) {
+      const uriFinal =
+        image.value[i].cropped != ""
+          ? image.value[i].cropped
+          : image.value[i].original;
+
+      console.log("This is the uri for images", uriFinal);
+      const blob = await uriToBlob(uriFinal);
       // this has the filename of the image taken through URI
-      const filename = selectedImagesGlobal[i].split("/").pop();
+      const filename = uriFinal.split("/").pop();
       // this has the type of the image, like if it's jpg or png etc so if it's jpg, match = [".jpg", "jpg"]
       //const match = /\.(\w+)$/.exec(filename);
       // assigning image/jpg, if match is jpg
       //const type = match ? `image/${match[1]}` : `image`;
       formData.append("images", {
-        uri,
+        uri: uriFinal,
         name: filename,
         type: blob.type,
       });
     }
+
+    console.log("what are we sending on api", formData);
 
     //console.log("This is the data from formData", data);
 
@@ -456,13 +490,13 @@ export default function PhotoStyling() {
   };
 
   const goToHomeScreen = () => {
-    setSelectedImagesGlobal([]);
+    dispatch(flushImages());
     setModalOrderSuccess(false);
-    console.log("selected images are zero?", selectedImagesGlobal);
+    console.log("selected images are zero?", image.value);
     navigation.navigate("ImageSlider");
   };
 
-  const framesCount = selectedImagesGlobal.length;
+  const framesCount = image.count;
   const extraFramesCount = framesCount > 3 ? framesCount - 3 : 0;
   const extraFramesCost = extraFramesCount * 500;
   const totalCost = 1500 + extraFramesCost;
@@ -544,7 +578,7 @@ export default function PhotoStyling() {
       </View>
 
       <FlatList
-        data={selectedImagesGlobal}
+        data={image.value}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         horizontal
@@ -556,7 +590,12 @@ export default function PhotoStyling() {
       />
       {isLoading && <ActivityIndicator size="large" color="#EA9B3F" />}
       <View style={styles.imageEditingStyle}>
-        <Pressable style={styles.removeButtonImagePress} onPress={handleRemove}>
+        <Pressable
+          style={styles.removeButtonImagePress}
+          onPress={() => {
+            handleRemove();
+          }}
+        >
           <Text
             allowFontScaling={false}
             style={styles.removeTextImagePressStyle}

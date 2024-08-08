@@ -25,21 +25,24 @@ import { useDispatch, useSelector } from "react-redux";
 
 // store.subscribe(() => console.log(store.getState()))
 
-const initialLayout = { width: Dimensions.get("window").width };
+// const initialLayout = { width: Dimensions.get("window").width };
 
 // i don't know what i was smoking when i thought
 // i should use a global array for mainitaining the most
 // critical part of the app, the images
 
-var selectedImagesGlobal = new Array();
+//var selectedImagesGlobal = new Array();
 
 export default function GalleryAccess({ navigation }) {
   const image = useSelector((state) => {
-    console.log("consoling state in selector", state.image);
+    console.log(
+      "consoling state image in selector (galleryaccess)",
+      state.image
+    );
     return state.image;
   });
 
-  console.log("set image redux in gallery", image);
+  console.log("set image slice in gallery", image);
   const dispatch = useDispatch();
 
   // dispatch(imageAdd(uri, prevSelectedImages));
@@ -91,7 +94,6 @@ export default function GalleryAccess({ navigation }) {
       Alert.alert("Select atleast 3 images to proceed");
       return;
     }
-    console.log("Selected Images on gallery access", selectedImagesGlobal);
 
     navigation.navigate("PhotoStyling");
   };
@@ -184,11 +186,11 @@ function AlbumEntry({ album, image }) {
     }
   }, [image]);
 
-  useEffect(() => {
-    console.log("set image redux in album entry", image);
+  // useEffect(() => {
+  //   console.log("set image redux in album entry", image);
 
-    console.log("Images that should show border color", selectedImages);
-  }, [selectedImages]);
+  //   console.log("Images that should show border color", selectedImages);
+  // }, [selectedImages]);
 
   async function getAlbumAssets() {
     setLoading(true);
@@ -207,15 +209,16 @@ function AlbumEntry({ album, image }) {
 
   const handlePress = async (uri) => {
     setSelectedImages((prevSelectedImages) => {
-      if (selectedImages.includes(uri)) {
+      if (selectedImages.some((_uri) => _uri.original == uri)) {
         const updatedSelection = prevSelectedImages.filter(
-          (imageUri) => imageUri !== uri
+          (imageUri) => imageUri.original !== uri
         );
         // //to show how many images are selected
         //onImageSelect(updatedSelection);
 
-        // console.log("updatedSelection", updatedSelection);
+        console.log("updatedSelection on remove part", updatedSelection);
 
+        //uri passes to the action param of image remove
         dispatch(imageRemove({ uri }));
 
         // selectedImagesGlobal = updatedSelection;
@@ -226,10 +229,15 @@ function AlbumEntry({ album, image }) {
         return updatedSelection;
       } else {
         dispatch(imageAdd({ uri }));
-        const updatedSelection = [...prevSelectedImages, uri];
+        const updatedSelection = [
+          ...prevSelectedImages,
+          { original: uri, cropped: "" },
+        ];
 
         // //to show how many images are selected
         // onImageSelect(updatedSelection);
+
+        console.log("updatedSelection on add part", updatedSelection);
 
         // selectedImagesGlobal = selectedImagesGlobal.concat(updatedSelection);
         // selectedImagesGlobal = [...new Set(selectedImagesGlobal)];
@@ -281,7 +289,9 @@ function AlbumEntry({ album, image }) {
                   style={[
                     styles.imageStyle,
                     image.value != undefined
-                      ? image.value.includes(_image.uri) && styles.selectedImage
+                      ? image.value.some(
+                          (_uri) => _image.uri == _uri.original
+                        ) && styles.selectedImage
                       : {},
                   ]}
                   source={{ uri: _image.uri }}

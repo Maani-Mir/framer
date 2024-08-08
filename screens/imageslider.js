@@ -20,9 +20,10 @@ import TabViewExp from "./tabview";
 import AddressList from "./addresslist";
 import AddressScreenAddNew from "./addressscreenaddnew";
 import ReduxExp from "../components/ReduxExp";
+import { useSelector, useDispatch } from "react-redux";
 
 const Stack = createNativeStackNavigator();
-let loggedIn;
+
 //------Async Storage
 // const checkLoginStatus = async (setInitialRoute, setIsLoading) => {
 //   try {
@@ -38,18 +39,6 @@ let loggedIn;
 // };
 
 //--------expo-secure-store
-const checkLoginStatus = async (setInitialRoute, setIsLoading) => {
-  try {
-    loggedIn = await SecureStore.getItemAsync("loggedIn");
-    if (loggedIn) {
-      setInitialRoute("GalleryAccess");
-    }
-  } catch (error) {
-    console.error("Failed to check login status", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
 
 //---------react-native-keychain
 // const checkLoginStatus = async (setInitialRoute, setIsLoading) => {
@@ -70,12 +59,44 @@ const checkLoginStatus = async (setInitialRoute, setIsLoading) => {
 // };
 
 export default function ImageSliderScreen() {
+  const [loggedIn, setLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState("ImageSlider");
 
+  const auth = useSelector((state) => {
+    console.log(
+      "consoling auth state in selector within navigator",
+      state.auth
+    );
+    return state.auth;
+  });
+
+  // const dispatch = useDispatch();
+
   useEffect(() => {
-    checkLoginStatus(setInitialRoute, setIsLoading);
-  }, []);
+    console.log("auth outside selector in navigator", auth);
+  }, [auth]);
+
+  //loggedInStore = SecureStore.getItem("loggedIn");
+
+  const checkLoginStatus = async (setIsLoading) => {
+    try {
+      if (auth.userId != "") {
+        // setInitialRoute("GalleryAccess");
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
+      }
+    } catch (error) {
+      console.log("Failed to log in", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus(setIsLoading);
+  }, [auth]);
 
   if (isLoading) {
     return (
@@ -89,22 +110,34 @@ export default function ImageSliderScreen() {
       initialRouteName={initialRoute}
       screenOptions={{ headerShown: false }}
     >
-      {/* {loggedIn?} */}
-      <Stack.Screen name="ImageSlider" component={ImageSlider} />
-      <Stack.Screen name="LoginPage" component={LoginPage} />
-      <Stack.Screen name="SignUpPage" component={SignUpPage} />
-      <Stack.Screen name="GalleryAccess" component={GalleryAccess} />
-      <Stack.Screen name="PhotoStyling" component={PhotoStyling} />
-      <Stack.Screen name="AddressScreenEdit" component={AddressScreenEdit} />
-      <Stack.Screen name="ImageAdjustScreen" component={ImageAdjustScreen} />
-      <Stack.Screen name="OrdersScreen" component={MyOrders} />
-      <Stack.Screen name="OrderDetails" component={OrderDetails} />
-      {/* <Stack.Screen name="TabViewExp" component={TabViewExp} /> */}
-      <Stack.Screen name="AddressList" component={AddressList} />
-      <Stack.Screen
-        name="AddressScreenAddNew"
-        component={AddressScreenAddNew}
-      />
+      {auth.userId == "" ? (
+        <>
+          <Stack.Screen name="LoginPage" component={LoginPage} />
+          <Stack.Screen name="SignUpPage" component={SignUpPage} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="ImageSlider" component={ImageSlider} />
+          <Stack.Screen name="GalleryAccess" component={GalleryAccess} />
+          <Stack.Screen name="PhotoStyling" component={PhotoStyling} />
+          <Stack.Screen
+            name="AddressScreenEdit"
+            component={AddressScreenEdit}
+          />
+          <Stack.Screen
+            name="ImageAdjustScreen"
+            component={ImageAdjustScreen}
+          />
+          <Stack.Screen name="OrdersScreen" component={MyOrders} />
+          <Stack.Screen name="OrderDetails" component={OrderDetails} />
+          {/* <Stack.Screen name="TabViewExp" component={TabViewExp} /> */}
+          <Stack.Screen name="AddressList" component={AddressList} />
+          <Stack.Screen
+            name="AddressScreenAddNew"
+            component={AddressScreenAddNew}
+          />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

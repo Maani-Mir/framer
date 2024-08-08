@@ -7,6 +7,7 @@ import {
   useIsFocused,
 } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
+import { checkHeader } from "../helper/headerhelper";
 
 export default function AddressList() {
   const [addressData, setAddressData] = useState([]);
@@ -16,12 +17,14 @@ export default function AddressList() {
   // const route = useRoute();
   // const { onDone } = route.params;
 
-  const getAllAddresses = () => {
-    const headers = {
-      userid: "668e636cdfb7272abd65a759",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
-    };
+  useEffect(() => {
+    console.log("what are in these headers!!?!?", checkHeader);
+  }, [checkHeader]);
+
+  const getAllAddresses = async () => {
+    const headers = await checkHeader();
+
+    console.log("checkheaders now!!?", headers);
     axios
       .get("https://backend.framer.pk/address", {
         headers: headers,

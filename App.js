@@ -15,7 +15,12 @@ import ImageSlider from "./components/ImageSlider";
 import AboutUs from "./screens/about";
 import ContactUs from "./screens/contact";
 import MyOrders from "./screens/orders";
-import DrawerContent, { DrawerStyles } from "@react-navigation/drawer";
+import DrawerContent, {
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+  DrawerStyles,
+} from "@react-navigation/drawer";
 import CustomSidebarMenu from "./components/CustomSidebarMenu";
 import {
   SafeAreaView,
@@ -31,8 +36,11 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ImageSliderScreen from "./screens/imageslider";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { store } from "./redux/store";
+import * as SecureStore from "expo-secure-store";
+import { useDispatch } from "react-redux";
+import { userIdRemove } from "./redux/authslice";
 
 //const navigation = useNavigation();
 //do i really have to make StackNav for every drawer just to get the status bar right?
@@ -96,12 +104,51 @@ const StackOrders = () => {
   );
 };
 
+// const StackLogout = () => {
+//   const Stack = createNativeStackNavigator();
+//   //const navigation = useNavigation();
+//   return (
+//     <Stack.Navigator
+//       screenOptions={{
+//         statusBarColor: "#EA9B3F",
+//         headerShown: false,
+//       }}
+//     >
+//       {/* <Stack.Screen name="Home" component={LogOut} /> */}
+//     </Stack.Navigator>
+//   );
+// };
+
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
+  const auth = useSelector((state) => {
+    console.log("consoling state auth in selector (app.js)", state.auth);
+
+    return state.auth;
+  });
+  console.log("set auth slice in app.js", auth);
+  const dispatch = useDispatch();
+
   return (
     <Drawer.Navigator
       initialRouteName="Home"
+      drawerContent={(props) => {
+        return (
+          <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+            <DrawerItem
+              label="Logout"
+              onPress={() => {
+                dispatch(userIdRemove());
+                console.log("is auth empty? (it should tho)", auth.userId);
+                //await SecureStore.setItemAsync("loggedIn", "false");
+                //props.navigation.navigate("LoginPage");
+              }}
+            />
+          </DrawerContentScrollView>
+        );
+      }}
       screenOptions={{
         headerStyle: { backgroundColor: "#EA9B3F" },
         headerTintColor: "white",
@@ -141,21 +188,21 @@ function MyDrawer() {
 export default App = () => {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000); // Simulate a 5-second loading time
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1000); // Simulate a 5-second loading time
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#EA9B3F" />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size="large" color="#EA9B3F" />
+  //     </View>
+  //   );
+  // }
   return (
     <Provider store={store}>
       <NavigationContainer>

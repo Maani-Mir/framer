@@ -10,8 +10,12 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-//import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import { useDispatch, useSelector } from "react-redux";
+import { userIdAdd } from "../redux/authslice";
+
+//import AsyncStorage from "@react-native-async-storage/async-storage";
+
 //import * as Keychain from "react-native-keychain";
 
 //--------Async storage
@@ -33,13 +37,14 @@ const checkLoginStatus = async (navigation, setIsLoading) => {
   try {
     const loggedIn = await SecureStore.getItemAsync("loggedIn");
     if (loggedIn) {
-      navigation.navigate("GalleryAccess");
+      // navigation.navigate("GalleryAccess");
     }
   } catch (error) {
     console.log("Failed to check login status", error);
-  } finally {
-    setIsLoading(false);
   }
+  // finally {
+  //   setIsLoading(false);
+  // }
 };
 
 //----------react-native-keychain
@@ -69,6 +74,15 @@ export default function LoginPage({ navigation }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const auth = useSelector((state) => {
+    console.log("consoling state auth in selector (login.js)", state.auth);
+
+    return state.auth;
+  });
+  console.log("set auth slice in login.js", auth);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     checkLoginStatus(navigation, setIsLoading);
   }, []);
@@ -95,6 +109,8 @@ export default function LoginPage({ navigation }) {
       .then(function (response) {
         console.log("response", response.data);
         setUserId(response.data.id);
+        dispatch(userIdAdd({ id: response.data.id }));
+        console.log("did we get the user? (we should tho)", auth.userId);
         setUserToken(response.data.token);
 
         // console.log("")
@@ -130,7 +146,7 @@ export default function LoginPage({ navigation }) {
       Alert.alert("Success, Login details saved!");
       //login logic
 
-      navigation.navigate("GalleryAccess", { userId }, { userToken });
+      // navigation.navigate("GalleryAccess");
     } catch (error) {
       console.error("Failed to save user data", error);
       setErrorMessage("Failed to save login details");
@@ -152,13 +168,13 @@ export default function LoginPage({ navigation }) {
     // }
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#EA9B3F" />
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <ActivityIndicator size="large" color="#EA9B3F" />
+  //     </View>
+  //   );
+  // }
   return (
     <View style={styles.container}>
       <Text allowFontScaling={false} style={styles.title}>
