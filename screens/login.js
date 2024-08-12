@@ -160,7 +160,7 @@ export default function LoginPage({ navigation }) {
         password: password,
       })
       .then(async function (response) {
-        console.log("response token", response.data.token);
+        console.log("response token", response.data);
 
         // setUserId(response.data.id);
         dispatch(userIdAdd({ id: response.data.id }));

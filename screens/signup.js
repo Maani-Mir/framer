@@ -42,12 +42,13 @@ export default function SignUpPage({ navigation }) {
       })
       .then(function (response) {
         console.log("response", response.data);
+        navigation.navigate("LoginPage");
       })
-      .catch(function (error) {
-        console.log("error", error.message);
+      .catch((error) => {
+        console.log("error", error.response.data.message);
+        Alert.alert(error.response.data.message);
       });
 
-    // navigation.navigate("GalleryAccess");
     // navigation.navigate("Gallery", { selectedImagesGlobal });
     //saving email, password to asyncstorage
     // try {
