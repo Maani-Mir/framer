@@ -75,6 +75,7 @@ export default function OrderDetails() {
                 uri: `https://backend.framer.pk/${_image}`,
               }}
               style={{ height: 100, width: 100, margin: 4 }}
+              key={_image.id}
             />
           ))}
         </View>

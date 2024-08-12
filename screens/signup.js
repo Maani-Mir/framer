@@ -47,7 +47,7 @@ export default function SignUpPage({ navigation }) {
         console.log("error", error.message);
       });
 
-    navigation.navigate("GalleryAccess");
+    // navigation.navigate("GalleryAccess");
     // navigation.navigate("Gallery", { selectedImagesGlobal });
     //saving email, password to asyncstorage
     // try {

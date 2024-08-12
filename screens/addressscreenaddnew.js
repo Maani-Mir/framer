@@ -16,6 +16,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
 import axios from "axios";
 import CustomText from "../components/customtext";
+import { checkHeader } from "../helper/headerhelper";
+
 export default function AddressScreenAddNew() {
   const route = useRoute();
   const navigation = useNavigation();
@@ -56,7 +58,7 @@ export default function AddressScreenAddNew() {
     { label: "UAE", value: "UAE" },
   ];
 
-  const handleDone = () => {
+  const handleDone = async () => {
     console.log("address after pressing done in address screen", address);
     // console.log("This is the address object values", Object.values(address));
 
@@ -69,11 +71,8 @@ export default function AddressScreenAddNew() {
       return;
     }
 
-    const headers = {
-      userid: "668e636cdfb7272abd65a759",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
-    };
+    const headers = await checkHeader();
+
     const data = {
       name: address.name,
       email: address.email,

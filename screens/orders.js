@@ -1,28 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, Text, View, StyleSheet } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
+import { checkHeader } from "../helper/headerhelper";
 
 export default function MyOrders() {
   const [orderData, setOrderData] = useState([]);
-  const headers = {
-    userid: "668e636cdfb7272abd65a759",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
+
+  const postOrders = async () => {
+    const headers = await checkHeader();
+    // const headers = {
+    //   userid: "668e636cdfb7272abd65a759",
+    //   Authorization:
+    //     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMzQ1NjQ2OSwiZXhwIjoxNzI0MDYxMjY5fQ.dpdLn5VmuiVMoKget44vq_00OG49pOysZiDOm95Tznc",
+    // };
+    axios
+      .get("https://backend.framer.pk/order", {
+        headers: headers,
+      })
+      .then(function (response) {
+        //console.log("response", response.data);
+        setOrderData(response.data);
+        // console.log("response from orderData", orderData.data);
+      })
+      .catch(function (error) {
+        console.log("error from orders", error.message);
+      });
   };
-  axios
-    .get("https://backend.framer.pk/order", {
-      headers: headers,
-    })
-    .then(function (response) {
-      //console.log("response", response.data);
-      setOrderData(response.data);
-      // console.log("response from orderData", orderData.data);
-    })
-    .catch(function (error) {
-      console.log("error from orders", error.message);
-    });
+
+  useEffect(() => {
+    postOrders();
+  }, []);
 
   return (
     <View>

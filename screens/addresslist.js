@@ -22,13 +22,7 @@ export default function AddressList() {
   }, [checkHeader]);
 
   const getAllAddresses = async () => {
-    // const headers = await checkHeader();
-    const headers = {
-      userid: "668e636cdfb7272abd65a759",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMzQ1MDc2MSwiZXhwIjoxNzI0MDU1NTYxfQ.lb8_6yJa7POBSYOOuuHZ8mOhpKeIgcSQav3ajPgNqDY",
-      // Authorization: `Bearer ${userTokenSecure}`,
-    };
+    const headers = await checkHeader();
 
     console.log("checkheaders now!!?", headers);
     axios
@@ -109,13 +103,10 @@ const AddressCard = ({ address, getAllAddresses }) => {
     setDeleteModalVisible(false);
   };
 
-  const deleteAddress = (address) => {
+  const deleteAddress = async (address) => {
     // console.log("deleting...", address._id);
-    const headers = {
-      userid: "668e636cdfb7272abd65a759",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
-    };
+    const headers = await checkHeader();
+
     axios
       .delete(`https://backend.framer.pk/address/${address._id}`, {
         headers: headers,

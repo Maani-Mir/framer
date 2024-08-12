@@ -21,6 +21,7 @@ import * as FileSystem from "expo-file-system";
 
 import { useDispatch, useSelector } from "react-redux";
 import { imageRemove, flushImages } from "../redux/imagesslice";
+import { checkHeader } from "../helper/headerhelper";
 
 // import { ScrollView } from "react-native-gesture-handler";
 
@@ -221,6 +222,7 @@ export default function PhotoStyling() {
     //--------just wanna see if we revert back to OG position, will it still work?
 
     const formData = new FormData();
+    const headers = await checkHeader();
 
     formData.append("name", address.name);
     formData.append("email", address.email);
@@ -265,12 +267,13 @@ export default function PhotoStyling() {
       const response = await fetch("https://backend.framer.pk/order", {
         method: "POST",
         body: formData,
-        headers: {
-          "content-type": "multipart/form-data",
-          userid: "668e636cdfb7272abd65a759",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
-        },
+        headers: { ...headers, "content-type": "multipart/form-data" },
+        // headers: {
+        //   "content-type": "multipart/form-data",
+        //   userid: "668e636cdfb7272abd65a759",
+        //   Authorization:
+        //     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OGU2MzZjZGZiNzI3MmFiZDY1YTc1OSIsImlhdCI6MTcyMjg0ODc4OSwiZXhwIjoxNzIzNDUzNTg5fQ.hjb3vgDdThKK7eZSl6fB9APBMzybUXX0PPhTfOQsdN8",
+        // },
       });
 
       console.log(
