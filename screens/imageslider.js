@@ -112,12 +112,12 @@ export default function ImageSliderScreen() {
     >
       {auth.userId == "" ? (
         <>
+          <Stack.Screen name="ImageSlider" component={ImageSlider} />
           <Stack.Screen name="LoginPage" component={LoginPage} />
           <Stack.Screen name="SignUpPage" component={SignUpPage} />
         </>
       ) : (
         <>
-          <Stack.Screen name="ImageSlider" component={ImageSlider} />
           <Stack.Screen name="GalleryAccess" component={GalleryAccess} />
           <Stack.Screen name="PhotoStyling" component={PhotoStyling} />
           <Stack.Screen

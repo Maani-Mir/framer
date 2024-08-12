@@ -54,7 +54,7 @@ const StackHome = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Home" component={ImageSliderScreen} />
+      <Stack.Screen name="Slider" component={ImageSliderScreen} />
     </Stack.Navigator>
   );
 };
@@ -69,7 +69,7 @@ const StackAbout = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Home" component={AboutUs} />
+      <Stack.Screen name="About" component={AboutUs} />
     </Stack.Navigator>
   );
 };
@@ -84,7 +84,7 @@ const StackContact = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Home" component={ContactUs} />
+      <Stack.Screen name="Contact" component={ContactUs} />
     </Stack.Navigator>
   );
 };
@@ -99,7 +99,7 @@ const StackOrders = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Home" component={MyOrders} />
+      <Stack.Screen name="Orders" component={MyOrders} />
     </Stack.Navigator>
   );
 };
@@ -150,6 +150,7 @@ function MyDrawer() {
                 //await SecureStore.setItemAsync("loggedIn", "false");
                 //props.navigation.navigate("LoginPage");
               }}
+              style={{ shadowColor: "black" }}
             />
           </DrawerContentScrollView>
           // ):()
@@ -211,21 +212,21 @@ function MyDrawer() {
 export default App = () => {
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setLoading(false);
-  //   }, 1000); // Simulate a 5-second loading time
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Simulate a 5-second loading time
 
-  //   return () => clearTimeout(timer);
-  // }, []);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // if (loading) {
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <ActivityIndicator size="large" color="#EA9B3F" />
-  //     </View>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#EA9B3F" />
+      </View>
+    );
+  }
   return (
     <Provider store={store}>
       <NavigationContainer>

@@ -69,13 +69,13 @@ export default function OrderDetails() {
           </Text>
         </View>
         <View style={[styles.row, styles.rowImage]}>
-          {order.images.map((_image) => (
+          {order.images.map((_image, i) => (
             <Image
+              key={i}
               source={{
                 uri: `https://backend.framer.pk/${_image}`,
               }}
               style={{ height: 100, width: 100, margin: 4 }}
-              key={_image.id}
             />
           ))}
         </View>

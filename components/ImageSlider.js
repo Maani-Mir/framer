@@ -71,7 +71,7 @@ export default ImageSlider = ({ navigation }) => {
 
       <Pressable
         style={styles.buttonStyle}
-        onPress={() => navigation.navigate("GalleryAccess")}
+        onPress={() => navigation.navigate("LoginPage")}
       >
         <Text allowFontScaling={false} style={styles.buttonText}>
           GET STARTED

@@ -114,7 +114,9 @@ export default function GalleryAccess({ navigation }) {
             dispatch(flushImages());
           }}
         >
-          <Text>Unselect All</Text>
+          <Text style={styles.unselectText} allowFontScaling={false}>
+            UNSELECT ALL
+          </Text>
         </Pressable>
       </View>
       {/* <AlbumTabs
@@ -468,6 +470,15 @@ const styles = StyleSheet.create({
     borderRadius: 7,
   },
   buttonText: { fontSize: 15, color: "white", fontWeight: "bold" },
+  unselectText: {
+    fontSize: 13,
+    color: "white",
+    fontWeight: "bold",
+    paddingTop: 2,
+    paddingLeft: 4,
+    // paddingBottom: 2,
+  },
+
   unselectStyle: {
     // marginTop: 0,
     marginLeft: "auto",
@@ -480,7 +491,7 @@ const styles = StyleSheet.create({
     // position: "absolute",
     // alignSelf: "center",
     paddingHorizontal: 20,
-    paddingVertical: 18,
+    paddingVertical: 15,
     borderRadius: 7,
   },
 });
