@@ -135,6 +135,8 @@ function MyDrawer() {
       initialRouteName="Home"
       drawerContent={(props) => {
         return (
+          // auth.userId != "" ? (
+
           <DrawerContentScrollView {...props}>
             <DrawerItemList {...props} />
             <DrawerItem
@@ -142,11 +144,15 @@ function MyDrawer() {
               onPress={() => {
                 dispatch(userIdRemove());
                 console.log("is auth empty? (it should tho)", auth.userId);
+                SecureStore.deleteItemAsync("userToken");
+                SecureStore.deleteItemAsync("userId");
+
                 //await SecureStore.setItemAsync("loggedIn", "false");
                 //props.navigation.navigate("LoginPage");
               }}
             />
           </DrawerContentScrollView>
+          // ):()
         );
       }}
       screenOptions={{
@@ -160,27 +166,44 @@ function MyDrawer() {
       }}
       //drawerContent={(props) => <CustomSidebarMenu {...props} />}
     >
-      <Drawer.Screen
-        name="Framer.pk"
-        component={StackHome}
-        options={{ drawerLabel: "Home" }}
-      />
+      {auth.userId == "" ? (
+        <>
+          <Drawer.Screen
+            name="Framer.pk"
+            component={StackHome}
+            options={{ drawerLabel: "Home" }}
+          />
+          <Drawer.Screen
+            name="About Us"
+            component={StackAbout}
+            options={{ drawerLabel: "About Us" }}
+          />
+        </>
+      ) : (
+        <>
+          <Drawer.Screen
+            name="Framer.pk"
+            component={StackHome}
+            options={{ drawerLabel: "Home" }}
+          />
 
-      <Drawer.Screen
-        name="About Us"
-        component={StackAbout}
-        options={{ drawerLabel: "About Us" }}
-      />
-      <Drawer.Screen
-        name="Contact Us"
-        component={StackContact}
-        options={{ drawerLabel: "Contact Us" }}
-      />
-      <Drawer.Screen
-        name="My Orders"
-        component={StackOrders}
-        options={{ drawerLabel: "My Orders" }}
-      />
+          <Drawer.Screen
+            name="About Us"
+            component={StackAbout}
+            options={{ drawerLabel: "About Us" }}
+          />
+          <Drawer.Screen
+            name="Contact Us"
+            component={StackContact}
+            options={{ drawerLabel: "Contact Us" }}
+          />
+          <Drawer.Screen
+            name="My Orders"
+            component={StackOrders}
+            options={{ drawerLabel: "My Orders" }}
+          />
+        </>
+      )}
     </Drawer.Navigator>
   );
 }

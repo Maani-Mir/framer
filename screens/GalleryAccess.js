@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { TabView, SceneMap } from "react-native-tab-view";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import PhotoStyling from "./photostyling";
 import { useRoute } from "@react-navigation/native";
 // import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // store.subscribe(() => console.log(store.getState()))
 
-// const initialLayout = { width: Dimensions.get("window").width };
+const initialLayout = { width: Dimensions.get("window").width };
 
 // i don't know what i was smoking when i thought
 // i should use a global array for mainitaining the most
@@ -119,8 +119,8 @@ export default function GalleryAccess({ navigation }) {
       </View>
       {/* <AlbumTabs
         // style={{ marginTop: -350 }}
-        albums={memoAlbums}
-        handleImageSelection={handleImageSelection}
+        albums={albums}
+        image={image}
       /> */}
       <ScrollView>
         {albums &&
@@ -142,37 +142,94 @@ export default function GalleryAccess({ navigation }) {
   );
 }
 
-// function AlbumTabs({ albums, handleImageSelection }) {
-//   const [index, setIndex] = useState(0);
-//   const [routes] = useState(
-//     albums.map((album) => ({
-//       key: album.id,
-//       title: album.title,
-//     }))
-//   );
+function AlbumTabs({ albums, image }) {
+  const [index, setIndex] = useState(0);
+  const [scenesAlbum, setScenesAlbum] = useState();
+  const [routes, setRoutes] = useState(
+    albums.map((album) => {
+      console.log("album.id: ", album.id);
+      console.log("album.title: ", album.title);
 
-//   const renderScene = SceneMap(
-//     albums.reduce((scenes, album) => {
-//       scenes[album.id] = () => (
-//         <AlbumEntry album={album} onImageSelect={handleImageSelection} />
-//       );
-//       return scenes;
-//     }, {})
-//   );
+      return {
+        key: album.id,
+        title: album.title,
+      };
+    })
+  );
 
-//   return (
-//     // <View style={styles.tabViewContainer}>
-//     <TabView
-//       renderTabBar={() => null}
-//       navigationState={{ index, routes }}
-//       renderScene={renderScene}
-//       onIndexChange={setIndex}
-//       initialLayout={initialLayout}
-//       style={styles.tabView}
-//     />
-//     // </View>
-//   );
-// }
+  const renderScene = () => {
+    SceneMap(
+      albums.reduce((scenes, album) => {
+        scenes[album.id] = () => {
+          <AlbumEntry album={album} image={image} />;
+        };
+
+        console.log("scenes: ", scenes);
+
+        return scenes;
+      }, {})
+    );
+  };
+
+  useEffect(() => {
+    // console.log("are we getting into render scene");
+    // renderScene();
+
+    const routeArray = albums.map((album) => {
+      console.log("album.id: ", album.id);
+      console.log("album.title: ", album.title);
+
+      return {
+        key: album.id,
+        title: album.title,
+      };
+    });
+
+    setRoutes(routeArray);
+  }, []);
+
+  // useEffect
+
+  return (
+    // <View style={styles.tabViewContainer}>
+    routes.length > 0 && (
+      <TabView
+        renderTabBar={(props) => (
+          <TabBar
+            {...props}
+            indicatorStyle={{ backgroundColor: "black" }}
+            style={{ backgroundColor: "pink", height: 50 }}
+            scrollEnabled={true}
+            renderLabel={({ route, color }) => (
+              <Text style={{ color: "black", fontSize: 15, fontWeight: "500" }}>
+                {route.title}
+              </Text>
+            )}
+            // onTabPress={}
+          />
+        )}
+        navigationState={{ index, routes }}
+        renderScene={SceneMap(
+          albums.reduce((scenes, album) => {
+            scenes[album.id] = () => {
+              <AlbumEntry album={album} image={image} />;
+            };
+
+            console.log("scenes: ", scenes);
+
+            return scenes;
+          }, {})
+        )}
+        onIndexChange={setIndex}
+        initialLayout={initialLayout}
+        lazy={true}
+        style={styles.tabView}
+      />
+    )
+
+    // </View>
+  );
+}
 
 function AlbumEntry({ album, image }) {
   const [assets, setAssets] = useState([]);
@@ -196,9 +253,10 @@ function AlbumEntry({ album, image }) {
     setLoading(true);
     const albumAssets = await MediaLibrary.getAssetsAsync({
       album,
-      first: 20,
+      first: 30,
     });
     setAssets(albumAssets.assets);
+    // console.log("album assets on getAlbumAssets", albumAssets.assets);
     setLoading(false);
   }
 
@@ -257,6 +315,33 @@ function AlbumEntry({ album, image }) {
     //   console.log("Selected Images after global", selectedImagesGlobal);
   };
 
+  // const AssetItem = ({ asset, image }) => {
+  //   return (
+  //     <TouchableOpacity
+  //       key={asset.id}
+  //       onPress={() => {
+  //         console.log("are we getting any uri", asset);
+  //         console.log("are we getting any uri (saadi image)", image.value);
+
+  //         handlePress(asset.uri);
+  //       }}
+  //     >
+  //       <Image
+  //         style={[
+  //           styles.imageStyle,
+  //           image.value != undefined
+  //             ? image.value.some((_uri) => asset.uri == _uri.original) &&
+  //               styles.selectedImage
+  //             : {},
+  //         ]}
+  //         source={{ uri: asset.uri }}
+  //         width={100}
+  //         height={100}
+  //       />
+  //     </TouchableOpacity>
+  //   );
+  // };
+
   return (
     <View key={album.id} style={styles.albumContainer}>
       <Text allowFontScaling={false} style={styles.albumNameStyle}>
@@ -271,7 +356,6 @@ function AlbumEntry({ album, image }) {
               0 results
             </Text>
           ) : (
-            // assets &&
             assets.map((_image) => (
               <TouchableOpacity
                 key={_image.id}
@@ -300,6 +384,18 @@ function AlbumEntry({ album, image }) {
                 />
               </TouchableOpacity>
             ))
+            // <FlatList
+            //   data={assets}
+            //   renderItem={({ item }) => (
+            //     // {console.log('item: ', item)}
+            //     <AssetItem asset={item} image={image} />
+            //   )}
+            // />
+
+            // assets &&
+            // assets.map((_image) => (
+
+            // ))
           )}
         </View>
       )}

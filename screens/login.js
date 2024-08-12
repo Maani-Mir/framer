@@ -71,6 +71,8 @@ export default function LoginPage({ navigation }) {
   const [password, setPassword] = useState("");
   const [userId, setUserId] = useState("");
   const [userToken, setUserToken] = useState("");
+  // let userToken = "";
+
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -83,9 +85,60 @@ export default function LoginPage({ navigation }) {
 
   const dispatch = useDispatch();
 
+  const verifyToken = async () => {
+    let userTokenSecure = await SecureStore.getItemAsync("userToken");
+    let userIdSecure = await SecureStore.getItemAsync("userId");
+    console.log("What's in here? do we have token", userTokenSecure);
+
+    const headers = {
+      userid: userIdSecure,
+      Authorization: `Bearer ${userTokenSecure}`,
+      // Authorization: `Bearer ${userTokenSecure}`,
+    };
+
+    if (userTokenSecure) {
+      console.log("userTokenSecure is valid", userTokenSecure);
+      console.log("this is my id right now", userIdSecure);
+      console.log("this is my token right now", userTokenSecure);
+      console.log("can i get my headers consoled too?", headers);
+
+      axios
+        .post(
+          "https://backend.framer.pk/verify-token",
+          {},
+          { headers: headers }
+        )
+        .then(function (response) {
+          console.log("are we even getting here?");
+          console.log(
+            "should be getting something like a token maybe?",
+            response.config.headers.userid
+          );
+
+          //during the session we need to make sure the user stays logged in
+          //otherwise he may get timed out based on expiration of token
+
+          dispatch(userIdAdd({ id: response.config.headers.userid }));
+        })
+        .catch(async function (error) {
+          console.log("Error, can't verify token", error);
+          await SecureStore.deleteItemAsync("userToken");
+          await SecureStore.deleteItemAsync("userId");
+          handleLogin();
+        });
+    } else {
+      console.log("userTokenSecure is invalid", userTokenSecure);
+      await SecureStore.deleteItemAsync("userToken");
+      await SecureStore.deleteItemAsync("userId");
+      handleLogin();
+    }
+  };
+
   useEffect(() => {
-    checkLoginStatus(navigation, setIsLoading);
+    verifyToken();
   }, []);
+
+  console.log("user token before handleLogin", userToken);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -106,12 +159,28 @@ export default function LoginPage({ navigation }) {
         email: email,
         password: password,
       })
-      .then(function (response) {
-        console.log("response", response.data);
-        setUserId(response.data.id);
+      .then(async function (response) {
+        console.log("response token", response.data.token);
+
+        // setUserId(response.data.id);
         dispatch(userIdAdd({ id: response.data.id }));
-        console.log("did we get the user? (we should tho)", auth.userId);
+        console.log("did we get the user? (we should tho): ", auth.userId);
+
         setUserToken(response.data.token);
+        //console.log("userToken before setting: ", userToken);
+
+        // sole purpose to have them is when user reloads its app again,
+        // the app knows it's that user since secure store doesn't get empty
+        // like redux store when relaunching the app
+
+        await SecureStore.setItemAsync("userToken", response.data.token);
+        await SecureStore.setItemAsync("userId", response.data.id);
+        // console.log("userToken after setting: ", userToken);
+
+        // console.log(
+        //   "user token before setItemAsync but after handleLogin: ",
+        //   userTokenSecure
+        // );
 
         // console.log("")
         //navigation.navigate("GalleryAccess");
@@ -121,6 +190,8 @@ export default function LoginPage({ navigation }) {
         setErrorMessage("Either username or password is incorrect");
         return;
       });
+
+    // if (userToken)
 
     //if(errorMessage==="")
 
@@ -138,19 +209,23 @@ export default function LoginPage({ navigation }) {
     //     console.error("Failed to save user data", error);
     //     setErrorMessage("Failed to save login details");
     //   }
-    //-------------------expo-secure-store
-    try {
-      await SecureStore.setItemAsync("userId", userId);
-      await SecureStore.setItemAsync("userToken", userToken);
-      await SecureStore.setItemAsync("loggedIn", "true");
-      Alert.alert("Success, Login details saved!");
-      //login logic
 
-      // navigation.navigate("GalleryAccess");
-    } catch (error) {
-      console.error("Failed to save user data", error);
-      setErrorMessage("Failed to save login details");
-    }
+    //-------------------expo-secure-store
+    // try {
+    //   await SecureStore.setItemAsync("userId", userId);
+    //   await SecureStore.setItemAsync("userToken", userToken);
+    //   await SecureStore.setItemAsync("loggedIn", "true");
+    //   //Alert.alert("Success, Login details saved!");
+    //   //login logic
+
+    //   // navigation.navigate("GalleryAccess");
+    // } catch (error) {
+    //   console.error("Failed to save user data", error);
+    //   setErrorMessage("Failed to save login details");
+    // }
+
+    //console.log("user token after setItemAsync", userToken);
+
     //-----------------react-native-keychain
     // try {
     //   const existingCredentials = await Keychain.getGenericPassword();
@@ -168,6 +243,9 @@ export default function LoginPage({ navigation }) {
     // }
   };
 
+  // useEffect(() => {
+  //   console.log("userToken are we getting it??!?", userToken);
+  // }, [userToken]);
   // if (isLoading) {
   //   return (
   //     <View style={styles.container}>
