@@ -150,7 +150,7 @@ function MyDrawer() {
                 //await SecureStore.setItemAsync("loggedIn", "false");
                 //props.navigation.navigate("LoginPage");
               }}
-              style={{ shadowColor: "black" }}
+              labelStyle={{ color: "white" }}
             />
           </DrawerContentScrollView>
           // ):()
