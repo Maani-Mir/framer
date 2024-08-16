@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useRef } from "react";
 import {
   Button,
   Text,
@@ -22,6 +22,7 @@ import { useRoute } from "@react-navigation/native";
 // import { useNavigation } from "@react-navigation/native";
 import { imageAdd, imageRemove, flushImages } from "../redux/imagesslice";
 import { useDispatch, useSelector } from "react-redux";
+import DynamicTabView from "react-native-dynamic-tab-view";
 
 // store.subscribe(() => console.log(store.getState()))
 
@@ -119,22 +120,18 @@ export default function GalleryAccess({ navigation }) {
           </Text>
         </Pressable>
       </View>
-      {/* <AlbumTabs
+
+      {/* <ScrollView>
+        {albums &&
+          albums.map((album) => (
+            <AlbumEntry key={album.id} album={album} image={image} />
+          ))}
+      </ScrollView> */}
+      <AlbumTabs
         // style={{ marginTop: -350 }}
         albums={albums}
         image={image}
-      /> */}
-      <ScrollView>
-        {albums &&
-          albums.map((album) => (
-            <AlbumEntry
-              key={album.id}
-              album={album}
-              image={image}
-              //onImageSelect={handleImageSelection}
-            />
-          ))}
-      </ScrollView>
+      />
       <Pressable style={styles.buttonStyle} onPress={handleProceed}>
         <Text allowFontScaling={false} style={styles.buttonText}>
           STYLE YOUR PHOTO
@@ -146,36 +143,44 @@ export default function GalleryAccess({ navigation }) {
 
 function AlbumTabs({ albums, image }) {
   const [index, setIndex] = useState(0);
-  const [scenesAlbum, setScenesAlbum] = useState();
-  const [routes, setRoutes] = useState(
-    albums.map((album) => {
-      console.log("album.id: ", album.id);
-      console.log("album.title: ", album.title);
+  const [sceneAssets, setSceneAssets] = useState([]);
+  const [routes, setRoutes] = useState([]);
 
-      return {
-        key: album.id,
-        title: album.title,
-      };
-    })
-  );
+  data = [
+    { title: "Tab1", key: "item1", color: "blue" },
+    { title: "Tab2", key: "item2", color: "yellow" },
+  ];
+  let defaultIndex = 0;
 
-  const renderScene = () => {
-    SceneMap(
-      albums.reduce((scenes, album) => {
-        scenes[album.id] = () => {
-          <AlbumEntry album={album} image={image} />;
-        };
+  // const renderScene = () => {
+  //   console.log("albums: ", albums);
 
-        console.log("scenes: ", scenes);
+  //   let scenes = {};
+  //   if (albums.length > 0) {
+  //     albums.reduce((test, album) => {
+  //       console.log("album: ", album);
+  //       console.log("scenes: ", scenes);
+  //       scenes[album.id] = () => {
+  //         <AlbumEntry album={album} image={image} />;
+  //       };
 
-        return scenes;
-      }, {})
-    );
-  };
+  //       setSceneAssets(scenes);
+  //     }, {});
+  //   }
+  // };
+
+  // async function sceneMapFunc() {
+  //   let sceneMapping = await SceneMap(sceneAssets);
+  //   console.log("SCENESSSSSSSS", sceneMapping);
+  // }
+
+  // useEffect(() => {
+  //   sceneMapFunc();
+  // }, [sceneAssets]);
 
   useEffect(() => {
-    // console.log("are we getting into render scene");
-    // renderScene();
+    console.log("are we getting into render scene");
+    //renderScene();
 
     const routeArray = albums.map((album) => {
       console.log("album.id: ", album.id);
@@ -186,21 +191,56 @@ function AlbumTabs({ albums, image }) {
         title: album.title,
       };
     });
+    console.log("album length", albums.length);
 
     setRoutes(routeArray);
-  }, []);
+  }, [albums]);
 
   // useEffect
 
+  const renderItem = (item, index) => {
+    console.log("renderItem", index);
+    console.log("renderItem for item", item);
+
+    return (
+      <AlbumEntry album={item} image={image} />
+      // <View key={index} style={{ backgroundColor: item["color"], flex: 1 }} />
+      // <View>
+      /* key={index} */
+
+      /* style={{ backgroundColor: item["color"], flex: 1 }} */
+      /* </View> */
+    );
+  };
+
+  const onChangeTab = (index) => {};
+
+  // const viewabilityConfig = useRef({
+  //   viewAreaCoveragePercentThreshold: 50,
+  // }).current;
+
   return (
     // <View style={styles.tabViewContainer}>
-    routes.length > 0 && (
+    routes.length > 0 ? (
+      <DynamicTabView
+        data={albums}
+        renderTab={renderItem}
+        defaultIndex={defaultIndex}
+        containerStyle={styles.tabContainer}
+        headerBackgroundColor={"black"}
+        headerTextStyle={styles.headerText}
+        onChangeTab={onChangeTab}
+        headerUnderlayColor={"#EA9B3F"}
+        // viewabilityConfig={viewabilityConfig}
+      />
+    ) : (
+      // <Text>Else body</Text>
       <TabView
         renderTabBar={(props) => (
           <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: "black" }}
-            style={{ backgroundColor: "pink", height: 50 }}
+            indicatorStyle={{ backgroundColor: "#EA9B3F" }}
+            style={{ backgroundColor: "white", height: 50 }}
             scrollEnabled={true}
             renderLabel={({ route, color }) => (
               <Text style={{ color: "black", fontSize: 15, fontWeight: "500" }}>
@@ -211,17 +251,20 @@ function AlbumTabs({ albums, image }) {
           />
         )}
         navigationState={{ index, routes }}
-        renderScene={SceneMap(
-          albums.reduce((scenes, album) => {
-            scenes[album.id] = () => {
-              <AlbumEntry album={album} image={image} />;
-            };
+        // console doesn't work here
 
-            console.log("scenes: ", scenes);
+        // renderScene={SceneMap(
+        //   albums.reduce((scenes, album) => {
+        //     scenes[album.id] = () => {
+        //       <AlbumEntry album={album} image={image} />;
+        //     };
 
-            return scenes;
-          }, {})
-        )}
+        //     console.log("scenes: ", scenes);
+
+        //     return scenes;
+        //   }, {})
+        // )}
+        renderScene={SceneMap(sceneAssets)}
         onIndexChange={setIndex}
         initialLayout={initialLayout}
         lazy={true}
@@ -255,7 +298,7 @@ function AlbumEntry({ album, image }) {
     setLoading(true);
     const albumAssets = await MediaLibrary.getAssetsAsync({
       album,
-      first: 30,
+      first: 100,
     });
     setAssets(albumAssets.assets);
     // console.log("album assets on getAlbumAssets", albumAssets.assets);
@@ -346,9 +389,9 @@ function AlbumEntry({ album, image }) {
 
   return (
     <View key={album.id} style={styles.albumContainer}>
-      <Text allowFontScaling={false} style={styles.albumNameStyle}>
+      {/* <Text allowFontScaling={false} style={styles.albumNameStyle}>
         {album.title}
-      </Text>
+      </Text> */}
       {loading ? (
         <ActivityIndicator size="small" color="#EA9B3F" />
       ) : (
@@ -358,6 +401,7 @@ function AlbumEntry({ album, image }) {
               0 results
             </Text>
           ) : (
+            assets &&
             assets.map((_image) => (
               <TouchableOpacity
                 key={_image.id}
@@ -415,6 +459,9 @@ const styles = StyleSheet.create({
         paddingTop: 10,
       },
     }),
+  },
+  tabContainer: {
+    flex: 1,
   },
   row: {
     flexDirection: "row",
@@ -493,5 +540,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 7,
+  },
+  headerText: {
+    color: "black",
+    // borderColor: "black",
   },
 });
