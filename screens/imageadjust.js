@@ -30,22 +30,28 @@ export default function ImageAdjustScreen({ navigation }) {
 
   console.log("what are the route params", route.params);
 
-  const [imageUri, setImageUri] = useState();
-  const [indexStyle, setIndexStyle] = useState();
+  const [imageUri, setImageUri] = useState(route.params.imageUri.original);
+  const [indexStyle, setIndexStyle] = useState(route.params.indexStyle);
   const [croppedImageUri, setCroppedImageUri] = useState();
 
   useEffect(() => {
-    setImageUri(route.params.imageUri.original);
-    setCroppedImageUri(route.params.imageUri.original);
-    setIndexStyle(route.params.indexStyle);
+    // setImageUri(route.params.imageUri.original);
+    //setCroppedImageUri(route.params.imageUri.original);
+    // setIndexStyle(route.params.indexStyle);
+    cropImage();
   }, []);
 
-  console.log("croppedImageUri before doing anything", croppedImageUri);
+  //console.log("croppedImageUri before doing anything", croppedImageUri);
   //below two statements are related to "CropView"
   //  const [showCropView, setShowCropView] = useState(true);
   //  const cropViewRef = React.useRef();
   console.log("should get an image at start here", imageUri);
   console.log("should get the image index at start here", indexStyle);
+
+  // useEffect(() => {
+  //   console.log("are we getting in crop?");
+  //   cropImage();
+  // }, [imageUri]);
 
   //--------image crop picker code
   const cropImage = () => {
@@ -56,8 +62,9 @@ export default function ImageAdjustScreen({ navigation }) {
     })
       .then((_image) => {
         console.log("We should get some sorta image here", _image);
-        setCroppedImageUri(_image.path);
+        //setCroppedImageUri(_image.path);
         setImageUri(_image.path);
+        handleDone(_image.path);
       })
       .catch((error) => {
         console.error("Error cropping image: ", error);
@@ -65,18 +72,23 @@ export default function ImageAdjustScreen({ navigation }) {
       });
   };
 
-  const handleDone = () => {
-    console.log(
-      "this is the cropped imageUri, before assigning",
-      croppedImageUri
-    );
+  // useEffect(() => {
+  //   console.log("are we getting in handleDone?");
+  //   handleDone();
+  // }, []);
+
+  const handleDone = (croppedUri) => {
+    // console.log(
+    //   "this is the cropped imageUri, before assigning",
+    //   croppedImageUri
+    // );
 
     // useEffect(() => {
     //   setImageUri(route.params.imageUri || "");
     // }, [route.params.imageUri]);
 
     // setImageUri(croppedImageUri);
-    dispatch(croppedImageAdd({ index: indexStyle, uri: imageUri }));
+    dispatch(croppedImageAdd({ index: indexStyle, uri: croppedUri }));
 
     console.log("updated state array with the cropped image", image.value);
 
@@ -90,7 +102,7 @@ export default function ImageAdjustScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: croppedImageUri }} style={styles.image} />
+      {/* <Image source={{ uri: croppedImageUri }} style={styles.image} />
 
       <Pressable style={styles.cropButton} onPress={cropImage}>
         <Text allowFontScaling={false} style={styles.cropButtonText}>
@@ -101,7 +113,7 @@ export default function ImageAdjustScreen({ navigation }) {
         <Text allowFontScaling={false} style={styles.doneButtonText}>
           DONE
         </Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 }
