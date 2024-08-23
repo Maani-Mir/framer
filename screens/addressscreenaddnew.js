@@ -158,8 +158,8 @@ export default function AddressScreenAddNew() {
         <View style={styles.dropdownContainer}>
           <Dropdown
             style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
+            // placeholderStyle={styles.placeholderStyle}
+            // selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             data={countries}
@@ -168,7 +168,7 @@ export default function AddressScreenAddNew() {
             valueField="value"
             placeholder={
               <CustomText
-                style={styles.placeholderStyle}
+                // style={styles.placeholderStyle}
                 children={"Country"}
               />
             }
@@ -180,7 +180,7 @@ export default function AddressScreenAddNew() {
             renderItem={renderItem}
             renderSelectedItem={(item) => (
               <CustomText
-                style={styles.selectedTextStyle}
+                // style={styles.selectedTextStyle}
                 children={item.label}
               />
             )}
@@ -266,12 +266,12 @@ const styles = StyleSheet.create({
     // borderWidth: 0.5,
   },
   placeholderStyle: {
-    fontSize: 16,
+    fontSize: 17,
     color: "gray",
     allowFontScaling: false,
   },
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 17,
     color: "black",
     allowFontScaling: false,
   },

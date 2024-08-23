@@ -160,8 +160,8 @@ export default function AddressScreenEdit() {
         <View style={styles.dropdownContainer}>
           <Dropdown
             style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
+            // placeholderStyle={styles.placeholderStyle}
+            // selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             data={countries}
@@ -170,7 +170,7 @@ export default function AddressScreenEdit() {
             valueField="value"
             placeholder={
               <CustomText
-                style={styles.placeholderStyle}
+                // style={styles.placeholderStyle}
                 children={"Country"}
               />
             }
@@ -183,7 +183,7 @@ export default function AddressScreenEdit() {
             renderItem={renderItem}
             renderSelectedItem={(item) => (
               <CustomText
-                style={styles.selectedTextStyle}
+                // style={styles.selectedTextStyle}
                 children={item.label}
               />
             )}

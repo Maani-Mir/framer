@@ -1,12 +1,19 @@
 import React from "react";
-import { Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
-const CustomText = ({ style, children }) => {
+const CustomText = ({ children }) => {
   return (
-    <Text style={style} allowFontScaling={false}>
+    <Text style={styles.customStyle} allowFontScaling={false}>
       {children}
     </Text>
   );
 };
+
+const styles = StyleSheet.create({
+  customStyle: {
+    fontSize: 17,
+    color: "gray",
+  },
+});
 
 export default CustomText;

@@ -12,6 +12,7 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  Animated,
   Dimensions,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
@@ -23,6 +24,7 @@ import { useRoute } from "@react-navigation/native";
 import { imageAdd, imageRemove, flushImages } from "../redux/imagesslice";
 import { useDispatch, useSelector } from "react-redux";
 import DynamicTabView from "react-native-dynamic-tab-view";
+// import { FlatList } from "react-native-gesture-handler";
 
 // store.subscribe(() => console.log(store.getState()))
 
@@ -199,8 +201,8 @@ function AlbumTabs({ albums, image }) {
   // useEffect
 
   const renderItem = (item, index) => {
-    console.log("renderItem", index);
-    console.log("renderItem for item", item);
+    //console.log("renderItem", index);
+    //console.log("renderItem for item", item);
 
     return (
       <AlbumEntry album={item} image={image} />
@@ -213,11 +215,13 @@ function AlbumTabs({ albums, image }) {
     );
   };
 
-  const onChangeTab = (index) => {};
-
-  // const viewabilityConfig = useRef({
-  //   viewAreaCoveragePercentThreshold: 50,
-  // }).current;
+  const onChangeTab = (index) => {
+    // getAlbumAssets();
+    // useEffect(() => {
+    //   console.log("album assets");
+    //   getAlbumAssets();
+    // }, []);
+  };
 
   return (
     // <View style={styles.tabViewContainer}>
@@ -235,6 +239,7 @@ function AlbumTabs({ albums, image }) {
       />
     ) : (
       // <Text>Else body</Text>
+      // ---------------------------USE LOADER HERE
       <TabView
         renderTabBar={(props) => (
           <TabBar
@@ -281,6 +286,10 @@ function AlbumEntry({ album, image }) {
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const [
+    onEndReachedCalledDuringMomentum,
+    setOnEndReachedCalledDuringMomentum,
+  ] = useState(true);
 
   useEffect(() => {
     if (image.value != undefined) {
@@ -295,18 +304,63 @@ function AlbumEntry({ album, image }) {
   // }, [selectedImages]);
 
   async function getAlbumAssets() {
+    // const pageSize = 20;
+    // const [lastItemID, setLastItemID] = useState("");
+    // const firstPage = await MediaLibrary.getAssetsAsync({
+    //   album,
+    //   first: 20,
+    //   sortBy: MediaLibrary.SortBy.default,
+    //   after: undefined,
+    // });
+
+    // // console.log("firstPage?: ", firstPage);
+
+    // // const secondPage = await MediaLibrary.getAssetsAsync({
+    // //   album,
+    // //   first: 25,
+    // //   // sortBy: MediaLibrary.SortBy.modificationTime,
+    // //   after: "25",
+    // // });
+
+    // // setAssets(secondPage.assets);
+
+    // setLastItemID(firstPage.endCursor); // for iOS
+
+    // let n = 2; // page number, starting from 1
+    // setLoading(true);
+
+    // const nthPage = await MediaLibrary.getAssetsAsync({
+    //   album,
+    //   first: pageSize,
+    //   // sortBy: MediaLibrary.SortBy.modificationTime,
+    //   after: Platform.OS === "android" ? `${(n - 1) * pageSize}` : lastItemID,
+    // });
+    // setLastItemID(nthPage.endCursor);
+
+    // // const simple = nthPage.assets.map((asset) => {
+    // //   return `ID: ${asset.id} Path: ${asset.uri}`;
+    // // });
+
+    // setAssets(nthPage.assets);
+
+    //---------------
+
     setLoading(true);
     const albumAssets = await MediaLibrary.getAssetsAsync({
       album,
       first: 100,
+      // after: endCursor,
+      sortBy: MediaLibrary.SortBy.creationTime,
     });
+    // albumAssets.endCursor;
     setAssets(albumAssets.assets);
-    // console.log("album assets on getAlbumAssets", albumAssets.assets);
+
+    console.log("album assets on getAlbumAssets", albumAssets.assets);
     setLoading(false);
   }
 
   useEffect(() => {
-    console.log("album assets");
+    console.log("album assets getting??");
     getAlbumAssets();
   }, [album]);
 
@@ -387,6 +441,63 @@ function AlbumEntry({ album, image }) {
   //   );
   // };
 
+  // const renderItemAssets = (item) => {
+  //   console.log("item for assets item", item);
+  //   // console.log("item.id: ", item.id);
+  //   console.log("item.item.id: ", item.item.id);
+
+  //   // console.log("index for assets index", index);
+  //   return (
+  //     // <View style={styles.tabContainer}>
+  //     <TouchableOpacity
+  //       key={item.item.id}
+  //       onPress={() => {
+  //         console.log("are we getting any uri", item);
+  //         console.log("are we getting any uri (saadi image)", image.value);
+
+  //         handlePress(item.item.uri);
+  //       }}
+  //     >
+  //       <View style={{ flex: 1, flexDirection: "column", margin: 1 }}>
+  //         <Image
+  //           style={[
+  //             styles.imageStyle,
+  //             image.value != undefined
+  //               ? image.value.some((_uri) => item.item.uri == _uri.original) &&
+  //                 styles.selectedImage
+  //               : {},
+  //           ]}
+  //           source={{ uri: item.item.uri }}
+  //           width={100}
+  //           height={100}
+  //         />
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+
+  // const viewabilityConfig = {
+  //   // waitforInteraction: true,
+  //   viewAreaCoveragePercentThreshold: 80,
+  // };
+
+  // const onViewableItemsChanged = useRef(({ viewableItems }) => {
+  //   if (viewableItems && viewableItems.length > 0) {
+  //     console.log(
+  //       "viewable items, can we get uri here????",
+  //       viewableItems[0].item
+  //     );
+  //     //setUri(viewableItems[0].item);
+  //     //setIndexForStyle(viewableItems[0].index);
+  //   }
+  // }).current;
+
+  // function scrollerEndDrag() {
+  //   console.log("What's happening in this scroll");
+
+  //   //getAlbumAssets();
+  // }
+
   return (
     <View key={album.id} style={styles.albumContainer}>
       {/* <Text allowFontScaling={false} style={styles.albumNameStyle}>
@@ -395,55 +506,90 @@ function AlbumEntry({ album, image }) {
       {loading ? (
         <ActivityIndicator size="small" color="#EA9B3F" />
       ) : (
-        <View style={styles.albumAssetsContainer}>
-          {assets.length === 0 ? (
-            <Text allowFontScaling={false} style={styles.noResultsText}>
-              0 results
-            </Text>
-          ) : (
-            assets &&
-            assets.map((_image) => (
-              <TouchableOpacity
-                key={_image.id}
-                onPress={() => {
-                  console.log("are we getting any uri", _image);
-                  console.log(
-                    "are we getting any uri (saadi image)",
-                    image.value
-                  );
+        //pagingEnabled={true} onScrollEndDrag={scrollerEndDrag()}
+        <ScrollView>
+          <View style={styles.albumAssetsContainer}>
+            {assets.length === 0 ? (
+              <Text allowFontScaling={false} style={styles.noResultsText}>
+                0 results
+              </Text>
+            ) : (
+              assets &&
+              assets.map((_image) => (
+                // <ScrollView style={{ flex: 1 }}>
+                // // <View style={{ height: "100%" }}>
+                // // <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
+                // // <FlatList
+                //   data={assets}
+                //   renderItem={renderItemAssets}
+                //   // columnWrapperStyle={{ flexWrap: "wrap" }}
+                //   // contentContainerStyle={{ flexGrow: 1 }}
+                //   numColumns={4}
+                //   keyExtractor={(item) => item.id}
+                //   onViewableItemsChanged={onViewableItemsChanged}
+                //   viewabilityConfig={viewabilityConfig}
+                //   // removeClippedSubviews={true}
+                //   onEndReached={({ distanceFromEnd }) => {
+                //     if (!onEndReachedCalledDuringMomentum) {
+                //       getAlbumAssets();
+                //       setOnEndReachedCalledDuringMomentum(true);
+                //     }
+                //     console.log(distanceFromEnd);
+                //     console.log("we have reached the end");
+                //     // onEndReachedThreshold();
+                //   }}
+                //   onEndReachedThreshold={0.7}
+                //   onMomentumScrollBegin={() => {
+                //     setOnEndReachedCalledDuringMomentum(false);
+                //   }}
+                //   // horizontal
+                //   // scrollEnabled={true}
+                //   // pagingEnabled={true}
+                //   // style={styles.tabContainer}
 
-                  handlePress(_image.uri);
-                }}
-              >
-                <Image
-                  style={[
-                    styles.imageStyle,
-                    image.value != undefined
-                      ? image.value.some(
-                          (_uri) => _image.uri == _uri.original
-                        ) && styles.selectedImage
-                      : {},
-                  ]}
-                  source={{ uri: _image.uri }}
-                  width={100}
-                  height={100}
-                />
-              </TouchableOpacity>
-            ))
-            // <FlatList
-            //   data={assets}
-            //   renderItem={({ item }) => (
-            //     // {console.log('item: ', item)}
-            //     <AssetItem asset={item} image={image} />
-            //   )}
-            // />
+                //   // {console.log('item: ', item)}
+                //   // <AssetItem asset={item} image={image} />
+                // />
+                // </SafeAreaView>
 
-            // assets &&
-            // assets.map((_image) => (
+                // </View>
+                //</ScrollView>
 
-            // ))
-          )}
-        </View>
+                <TouchableOpacity
+                  key={_image.id}
+                  onPress={() => {
+                    console.log("are we getting any uri", _image);
+                    console.log(
+                      "are we getting any uri (saadi image)",
+                      image.value
+                    );
+
+                    handlePress(_image.uri);
+                  }}
+                >
+                  <Image
+                    style={[
+                      styles.imageStyle,
+                      image.value != undefined
+                        ? image.value.some(
+                            (_uri) => _image.uri == _uri.original
+                          ) && styles.selectedImage
+                        : {},
+                    ]}
+                    source={{ uri: _image.uri }}
+                    width={100}
+                    height={100}
+                  />
+                </TouchableOpacity>
+              ))
+
+              // assets &&
+              // assets.map((_image) => (
+
+              // ))
+            )}
+          </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -481,11 +627,14 @@ const styles = StyleSheet.create({
     // textAlign: "center",
   },
   albumContainer: {
+    // flex: 1,
     paddingHorizontal: 5,
     marginBottom: 5,
     gap: 4,
   },
   albumAssetsContainer: {
+    flex: 1,
+    // flexGrow: 1,
     flexDirection: "row",
     flexWrap: "wrap",
   },
@@ -496,6 +645,8 @@ const styles = StyleSheet.create({
   imageStyle: {
     borderColor: "white",
     borderWidth: 3,
+    // flex: 1,
+    // flexDirection: "row",
   },
   noResultsText: {
     fontSize: 16,
